@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:odontogram/pages/klasifikasi.dart';
 
 class EditOdontogram extends StatefulWidget {
   const EditOdontogram({super.key});
@@ -46,7 +47,12 @@ class _EditOdontogramState extends State<EditOdontogram> {
                           shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       )),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Klasifikasi()));
+                      },
                       child: Text("Mulai Klasifikasi")),
                 ),
               ],
