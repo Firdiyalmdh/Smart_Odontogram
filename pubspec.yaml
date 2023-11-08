@@ -70,6 +70,7 @@ flutter:
     - assets/register_background.png
     - assets/card_background.png
     - assets/home_background.png
+    - assets/no_image.png
     #- images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
