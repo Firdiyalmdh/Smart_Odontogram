@@ -1,19 +1,19 @@
 {
     "project_info": {
-        "project_number": "842124013644",
-        "project_id": "odontogram-f177a",
-        "storage_bucket": "odontogram-f177a.appspot.com"
+        "project_number": "513370865823",
+        "project_id": "odontogram-firebase",
+        "storage_bucket": "odontogram-firebase.appspot.com"
     },
     "client": [{
         "client_info": {
-            "mobilesdk_app_id": "1:842124013644:android:3d84d4b3feea5e770784e9",
+            "mobilesdk_app_id": "1:513370865823:android:721cc273d908cafb3662aa",
             "android_client_info": {
                 "package_name": "com.example.odontogram"
             }
         },
         "oauth_client": [],
         "api_key": [{
-            "current_key": "AIzaSyCACaiNeArAEItL7PlyZG0pfFqqg3mLzPc"
+            "current_key": "AIzaSyCR5L50RRWsrkyU0d8XmtYOzt-6Wh-3fj0"
         }],
         "services": {
             "appinvite_service": {

@@ -160,6 +160,13 @@ class CardDetailPasien extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<List<String>> listsData = [
+      ['Firdiyanti'],
+      ['Perempuan'],
+      ['25262744003020001'],
+      ['Mojokerto, 4 Maret 2023'],
+      ['10 November 2023'],
+    ];
     return Container(
       margin: const EdgeInsets.all(15),
       height: 120,
@@ -173,17 +180,23 @@ class CardDetailPasien extends StatelessWidget {
               offset: Offset(0, 0.5),
             )
           ]),
-      child: ListTile(
-        title: Text("Nama pasien"),
-        subtitle: Column(
-          children: [
-            Text("Jenis kelamin"),
-            Text("NIK"),
-            Text("Tempat tanggal lahir"),
-            Text("Pemeriksaan terakhir"),
-          ],
-        ),
-      ),
+      // child: ListView.builder(
+      //   itemCount: listsData.length,
+      //   itemBuilder: (context, index) {
+      //     red
+      //   },
+      // )
+      // child: ListTile(
+      //   title: Text("Nama pasien"),
+      //   subtitle: Column(
+      //     children: [
+      //       Text("Jenis kelamin"),
+      //       Text("NIK"),
+      //       Text("Tempat tanggal lahir"),
+      //       Text("Pemeriksaan terakhir"),
+      //     ],
+      //   ),
+      // ),
     );
   }
 }
