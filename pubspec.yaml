@@ -7,7 +7,7 @@ environment:
 
 dependencies: 
   intl: ^0.17.0
-  image_picker: ^0.8.6
+  image_picker: ^0.8.2
   cupertino_icons: ^1.0.2
   firebase_core: 2.22.0
   flutter: 
@@ -17,16 +17,26 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   flutter_test: 
     sdk: flutter
+  
 
 flutter: 
   assets: 
     - assets/odontogram.jpeg
     - assets/normal.png
     - assets/normal1.png
+    - assets/sisa_akar.png
+    - assets/sisa_akar1.png
+    - assets/impaksi.png
+    - assets/impaksi1.png
+    - assets/tumpatan.png
+    - assets/tumpatan1.png
+    - assets/karies.png
+    - assets/karies1.png
     - assets/login_background.png
     - assets/register_background.png
     - assets/card_background.png
     - assets/home_background.png
     - assets/no_image.png
+    
   uses-material-design: true
 

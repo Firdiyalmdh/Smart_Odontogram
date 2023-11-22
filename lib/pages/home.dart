@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:odontogram/pages/detail_pasien.dart';
+import 'package:odontogram/pages/profile.dart';
 import 'package:odontogram/pages/tambah_pasien.dart';
 
 class Home extends StatefulWidget {
@@ -34,6 +35,14 @@ class _DataPasienState extends State<Home> {
       appBar: AppBar(
         title: Text("Data Pasien"),
         backgroundColor: Colors.blue[900],
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Profile()));
+              },
+              icon: Icon(Icons.person))
+        ],
       ),
       body: Container(
         margin: EdgeInsets.all(20),
