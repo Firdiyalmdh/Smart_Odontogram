@@ -73,21 +73,13 @@ class _ProfileState extends State<Profile> {
             ),
             SizedBox(height: 20),
             Text(
-              'Nama Anda',
+              'Nama Dokter',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 10),
-            Text(
-              'Deskripsi singkat tentang diri Anda',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-              textAlign: TextAlign.center,
-            ),
             SizedBox(height: 20),
             Card(
               child: ListTile(
@@ -97,8 +89,8 @@ class _ProfileState extends State<Profile> {
             ),
             Card(
               child: ListTile(
-                leading: Icon(Icons.phone),
-                title: Text('+123 456 7890'),
+                leading: Icon(Icons.location_city),
+                title: Text('Rumah Sakit ABCDE'),
               ),
             ),
           ],

@@ -15,9 +15,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //
       body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage("assets/login_background.png"),
                   fit: BoxFit.cover)),
@@ -27,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Align(
+                const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Welcome Back.",
@@ -57,10 +56,10 @@ class _LoginPageState extends State<LoginPage> {
                     contentPadding: EdgeInsets.all(8),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
-                Align(
+                const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Password",
@@ -69,8 +68,8 @@ class _LoginPageState extends State<LoginPage> {
                 TextField(
                   obscureText: !_isVisible,
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.all(8),
+                      border: const OutlineInputBorder(),
+                      contentPadding: const EdgeInsets.all(8),
                       suffixIcon: IconButton(
                         icon: Icon(_isVisible
                             ? Icons.visibility_off
@@ -80,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                         }),
                       )),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
@@ -98,14 +97,14 @@ class _LoginPageState extends State<LoginPage> {
                             MaterialPageRoute(
                                 builder: (context) => const Home()));
                       },
-                      child: Text("Login"),
+                      child: const Text("Login"),
                     )),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Belum punya akun?"),
+                    const Text("Belum punya akun?"),
                     TextButton(
                       onPressed: () {
                         Navigator.push(

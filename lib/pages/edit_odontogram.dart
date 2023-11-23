@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:odontogram/pages/klasifikasi.dart';
 
 class EditOdontogram extends StatefulWidget {
   final String initialValue;
@@ -34,7 +33,7 @@ class _EditOdontogramState extends State<EditOdontogram> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit Odontogram"),
+        title: const Text("Edit Odontogram"),
         backgroundColor: Colors.blue[900],
       ),
       body: WillPopScope(
@@ -48,11 +47,11 @@ class _EditOdontogramState extends State<EditOdontogram> {
           margin: const EdgeInsets.all(20),
           child: Column(
             children: [
-              Align(
+              const Align(
                 alignment: Alignment.centerLeft,
                 child: Text("Kondisi Gigi"),
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               InputDecorator(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -64,35 +63,35 @@ class _EditOdontogramState extends State<EditOdontogram> {
                     value: KondisiGigiDropDown,
                     items: const [
                       DropdownMenuItem(
+                          value: "Normal",
                           child: Text(
                             "  Normal",
                             style: TextStyle(fontSize: 14),
-                          ),
-                          value: "Normal"),
+                          )),
                       DropdownMenuItem(
+                          value: "Karies",
                           child: Text(
                             "  Karies",
                             style: TextStyle(fontSize: 14),
-                          ),
-                          value: "Karies"),
+                          )),
                       DropdownMenuItem(
+                          value: "Tumpatan",
                           child: Text(
                             "  Tumpatan",
                             style: TextStyle(fontSize: 14),
-                          ),
-                          value: "Tumpatan"),
+                          )),
                       DropdownMenuItem(
+                          value: "Sisa Akar",
                           child: Text(
                             "  Sisa Akar",
                             style: TextStyle(fontSize: 14),
-                          ),
-                          value: "Sisa Akar"),
+                          )),
                       DropdownMenuItem(
+                          value: "Impaksi",
                           child: Text(
                             "  Impaksi",
                             style: TextStyle(fontSize: 14),
-                          ),
-                          value: "Impaksi"),
+                          )),
                     ],
                     onChanged: (value) {
                       setState(() {
@@ -102,7 +101,7 @@ class _EditOdontogramState extends State<EditOdontogram> {
                   ),
                 ),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               Row(
                 children: [
                   Expanded(
@@ -114,9 +113,9 @@ class _EditOdontogramState extends State<EditOdontogram> {
                       ),
                       onPressed: () {
                         _goBackWithResult();
-                        _closeEditOdontogram(); // Menutup EditOdontogram
+                        _closeEditOdontogram();
                       },
-                      child: Text("Simpan"),
+                      child: const Text("Simpan"),
                     ),
                   ),
                 ],

@@ -1,106 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:odontogram/components/appbar.dart';
+import 'package:odontogram/components/card_data_pasien.dart';
+import 'package:odontogram/components/pasien_provider.dart';
+import 'package:odontogram/components/search_form.dart';
 import 'package:odontogram/pages/detail_pasien.dart';
 import 'package:odontogram/pages/profile.dart';
-import 'package:odontogram/pages/tambah_pasien.dart';
+import 'package:provider/provider.dart';
+import 'tambah_pasien.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home({Key? key}) : super(key: key);
 
   @override
   State<Home> createState() => _DataPasienState();
 }
 
 class _DataPasienState extends State<Home> {
-  List<String> NamaPasien = [
-    "Alim Shafiyyur Rahman",
-    "Arroyan Dylan Alfarizqi",
-    "Bari Abul Jalil",
-    "Bilal Hafizh Athaillah",
-    "Chairil Mihran Ghazzal",
-    "Kamil Nufail Zafran",
-    "Muhammad Zaky Fawwaz",
-    "Siti Amina",
-    "Muhammad Abrisam Izadin",
-    "Muhammad Dzakiandra Hasan",
-    "Muhammad Fattah Ibrahim",
-    "Amina Salwa",
-    "Dina Yasirah",
-    "Hana Azzahra",
-    "Laila Amalia"
-  ];
+  late TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Data Pasien"),
-        backgroundColor: Colors.blue[900],
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Profile()));
-              },
-              icon: Icon(Icons.person))
-        ],
-      ),
+      appBar: MyAppBar(),
       body: Container(
-        margin: EdgeInsets.all(20),
+        margin: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 10),
+            Text(
+              "Drg. Nama Lengkap Dokter",
+              style: TextStyle(
+                  fontSize: 21,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[600]),
+            ),
             SizedBox(
-              height: 50,
-              child: TextField(
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
-                    hintText: "search"),
-              ),
+              height: 20,
+            ),
+            Container(
+              width: 390,
+              height: 175,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                image: AssetImage('assets/banner.png'),
+                fit: BoxFit.cover,
+              )),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            SearchForm(searchController: _searchController),
+            SizedBox(height: 15),
+            Text(
+              "Data Pasien",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[600]),
             ),
             SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (BuildContext, index) {
-                  return Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
-                      child: InkWell(
-                        child: Container(
-                          height: 100,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage("assets/card_background.png"),
-                                fit: BoxFit.cover),
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 2,
-                                blurRadius: 1,
-                                offset: Offset(2, 2),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                NamaPasien[index],
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DetailPasien()));
-                        },
-                      ));
-                },
-              ),
-            ),
+            CardDataPasien(),
           ],
         ),
       ),
@@ -110,7 +76,9 @@ class _DataPasienState extends State<Home> {
         child: const Icon(Icons.add),
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => TambahPasien()));
+            context,
+            MaterialPageRoute(builder: (context) => TambahPasien()),
+          );
         },
       ),
     );
