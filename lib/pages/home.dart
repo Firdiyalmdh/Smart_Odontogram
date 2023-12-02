@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:odontogram/components/appbar.dart';
 import 'package:odontogram/components/card_data_pasien.dart';
-import 'package:odontogram/components/pasien_provider.dart';
 import 'package:odontogram/components/search_form.dart';
-import 'package:odontogram/pages/detail_pasien.dart';
-import 'package:odontogram/pages/profile.dart';
-import 'package:provider/provider.dart';
 import 'tambah_pasien.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
   @override
-  State<Home> createState() => _DataPasienState();
+  State<Home> createState() => _Home();
 }
 
-class _DataPasienState extends State<Home> {
+class _Home extends State<Home> {
   late TextEditingController _searchController;
 
   @override

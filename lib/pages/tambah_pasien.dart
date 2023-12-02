@@ -1,5 +1,3 @@
-// tambah_pasien.dart
-
 import 'package:flutter/material.dart';
 import 'package:odontogram/components/pasien_model.dart';
 import 'package:odontogram/components/pasien_provider.dart';
@@ -39,7 +37,9 @@ class _TambahPasienState extends State<TambahPasien> {
               TextField(
                 controller: _namaController,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                   contentPadding: EdgeInsets.all(8),
                 ),
               ),
@@ -52,7 +52,9 @@ class _TambahPasienState extends State<TambahPasien> {
               TextField(
                 controller: _nikController,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                   contentPadding: EdgeInsets.all(8),
                 ),
               ),
@@ -63,8 +65,9 @@ class _TambahPasienState extends State<TambahPasien> {
               ),
               SizedBox(height: 5),
               InputDecorator(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0)),
                   contentPadding: EdgeInsets.symmetric(vertical: 2.0),
                 ),
                 child: DropdownButtonHideUnderline(
@@ -104,7 +107,9 @@ class _TambahPasienState extends State<TambahPasien> {
               TextField(
                 controller: _tempatLahirController,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                   contentPadding: EdgeInsets.all(8),
                 ),
               ),
@@ -117,7 +122,9 @@ class _TambahPasienState extends State<TambahPasien> {
               TextField(
                 controller: _dateController,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                   contentPadding: EdgeInsets.all(8),
                   prefixIcon: Icon(Icons.calendar_today),
                 ),
@@ -130,29 +137,33 @@ class _TambahPasienState extends State<TambahPasien> {
               Row(
                 children: [
                   Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
+                    child: SizedBox(
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
                         ),
+                        onPressed: () {
+                          Pasien newPasien = Pasien(
+                            nama: _namaController.text,
+                            nik: _nikController.text,
+                            jenisKelamin: _selectedDropDown,
+                            tempatLahir: _tempatLahirController.text,
+                            tanggalLahir: _dateController.text,
+                          );
+
+                          PasienProvider pasienProvider =
+                              Provider.of<PasienProvider>(context,
+                                  listen: false);
+
+                          pasienProvider.tambahPasien(newPasien);
+
+                          Navigator.pop(context);
+                        },
+                        child: Text("Tambahkan Pasien"),
                       ),
-                      onPressed: () {
-                        Pasien newPasien = Pasien(
-                          nama: _namaController.text,
-                          nik: _nikController.text,
-                          jenisKelamin: _selectedDropDown,
-                          tempatLahir: _tempatLahirController.text,
-                          tanggalLahir: _dateController.text,
-                        );
-
-                        PasienProvider pasienProvider =
-                            Provider.of<PasienProvider>(context, listen: false);
-
-                        pasienProvider.tambahPasien(newPasien);
-
-                        Navigator.pop(context);
-                      },
-                      child: Text("Tambahkan Pasien"),
                     ),
                   ),
                 ],

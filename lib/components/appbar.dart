@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:odontogram/pages/profile.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
