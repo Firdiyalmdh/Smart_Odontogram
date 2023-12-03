@@ -4,7 +4,7 @@ import 'package:odontogram/components/appbar.dart';
 import 'package:odontogram/components/card_data_pasien.dart';
 import 'package:odontogram/components/search_form.dart';
 import 'package:odontogram/modules/home/index.dart';
-import '../../../pages/add_patient_screen.dart';
+import 'package:odontogram/routes/app_routes.dart';
 
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({Key? key}) : super(key: key);
@@ -22,28 +22,28 @@ class HomeScreen extends GetView<HomeController> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Drg. Nama Lengkap Dokter",
-              style: TextStyle(
-                  fontSize: 21,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[600]),
+            Obx(
+              () => Text(
+                controller.user.value.name,
+                style: TextStyle(
+                    fontSize: 21,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[600]),
+              ),
             ),
             const SizedBox(height: 20),
             Container(
               width: 390,
               height: 175,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   image: DecorationImage(
                 image: AssetImage('assets/banner.png'),
                 fit: BoxFit.cover,
               )),
             ),
-            SizedBox(
-              height: 15,
-            ),
+            const SizedBox(height: 15),
             SearchForm(searchController: controller.searchController),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             Text(
               "Data Pasien",
               style: TextStyle(
@@ -51,8 +51,25 @@ class HomeScreen extends GetView<HomeController> {
                   fontWeight: FontWeight.bold,
                   color: Colors.grey[600]),
             ),
-            SizedBox(height: 10),
-            CardDataPasien(),
+            const SizedBox(height: 10),
+            Expanded(
+              child: Obx(
+                () => ListView.builder(
+                  itemCount: controller.filteredPatients.length,
+                  itemBuilder: (context, index) {
+                    final data = controller.filteredPatients[index];
+                    return CardDataPasien(
+                      name: data.name,
+                      onDelete: () => controller.deletePatient(data.id),
+                      onTap: () => Get.toNamed(
+                        AppRoutes.DETAIL_PATIENT,
+                        arguments: data,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -61,10 +78,7 @@ class HomeScreen extends GetView<HomeController> {
         foregroundColor: Colors.black,
         child: const Icon(Icons.add),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddPatientScreen()),
-          );
+          Get.toNamed(AppRoutes.ADD_PATIENT);
         },
       ),
     );

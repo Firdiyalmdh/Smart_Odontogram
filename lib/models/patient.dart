@@ -1,31 +1,32 @@
 import 'package:equatable/equatable.dart';
 
-import 'package:odontogram/models/medical_record.dart';
-
 class Patient extends Equatable {
+  final String id;
   final String name;
   final String nik;
   final String gender;
   final String birthPlace;
   final String birthDate;
-  final MedicalRecord? lastMedicalExam;
+  final String? lastCheckupDate;
 
   const Patient({
+    required this.id,
     required this.name,
     required this.nik,
     required this.gender,
     required this.birthPlace,
     required this.birthDate,
-    required this.lastMedicalExam,
+    required this.lastCheckupDate,
   });
 
   @override
   List<Object?> get props => [
+        id,
         name,
         nik,
         gender,
         birthPlace,
         birthDate,
-        lastMedicalExam,
+        lastCheckupDate,
       ];
 }

@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
-import 'package:odontogram/pages/add_patient_screen.dart';
 import 'package:odontogram/pages/classification_screen.dart';
-import 'package:odontogram/pages/detail_patient_screen.dart';
+import 'package:odontogram/modules/patient/index.dart';
 import 'package:odontogram/modules/home/index.dart';
 import 'package:odontogram/modules/auth/index.dart';
 import 'package:odontogram/pages/new_medical_exam_screen.dart';
@@ -37,19 +36,21 @@ class AppPages {
     GetPage<AddPatientScreen>(
       name: AppRoutes.ADD_PATIENT,
       page: () => const AddPatientScreen(),
+      binding: AddPatientBinding(),
       preventDuplicates: true,
     ),
     GetPage<DetailPatientScreen>(
       name: AppRoutes.DETAIL_PATIENT,
       page: () => const DetailPatientScreen(),
+      binding: DetailPatientBinding(),
       preventDuplicates: true,
     ),
-    GetPage<SplashScreen>(
+    GetPage<NewMedicalExamScreen>(
       name: AppRoutes.NEW_MEDICAL_EXAM,
       page: () => const NewMedicalExamScreen(),
       preventDuplicates: true,
     ),
-    GetPage<SplashScreen>(
+    GetPage<ClassificationScreen>(
       name: AppRoutes.CLASSIFICATION,
       page: () => const ClassificationScreen(),
       preventDuplicates: true,
