@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final void Function() onLogoutClick;
+
+  const MyAppBar({super.key, required this.onLogoutClick});
+
   @override
-  Size get preferredSize => Size.fromHeight(50.0);
+  Size get preferredSize => const Size.fromHeight(50.0);
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +22,8 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
             width: 40.0,
             height: 40.0,
           ),
-          SizedBox(width: 8.0),
-          Column(
+          const SizedBox(width: 8.0),
+          const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -30,13 +34,15 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ],
           ),
-          Spacer(),
+          const Spacer(),
           IconButton(
             icon: Icon(
               Icons.logout,
               color: Colors.blue[900],
             ),
-            onPressed: () {},
+            onPressed: () {
+              onLogoutClick();
+            },
           ),
         ],
       ),

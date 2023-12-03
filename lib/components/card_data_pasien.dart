@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:odontogram/components/pasien_provider.dart';
-import 'package:odontogram/pages/detail_pasien.dart';
+import 'package:odontogram/pages/detail_patient_screen.dart';
 import 'package:provider/provider.dart';
 
 class CardDataPasien extends StatelessWidget {
@@ -55,9 +55,7 @@ class CardDataPasien extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DetailPasien(
-                          pasien: pasienProvider.daftarPasien[index],
-                        ),
+                        builder: (context) => DetailPatientScreen(),
                       ),
                     );
                   },

@@ -2,14 +2,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class Klasifikasi extends StatefulWidget {
-  const Klasifikasi({Key? key}) : super(key: key);
+class ClassificationScreen extends StatefulWidget {
+  const ClassificationScreen({Key? key}) : super(key: key);
 
   @override
-  State<Klasifikasi> createState() => _KlasifikasiState();
+  State<ClassificationScreen> createState() => _ClassificationScreenState();
 }
 
-class _KlasifikasiState extends State<Klasifikasi> {
+class _ClassificationScreenState extends State<ClassificationScreen> {
   File? _selectedImage;
   bool _isCardVisible = false;
 

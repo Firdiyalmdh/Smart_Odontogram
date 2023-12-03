@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:odontogram/pages/klasifikasi.dart';
+import 'package:odontogram/pages/classification_screen.dart';
 
-class PemeriksaanBaru extends StatefulWidget {
-  const PemeriksaanBaru({super.key});
+class NewMedicalExamScreen extends StatefulWidget {
+  const NewMedicalExamScreen({super.key});
 
   @override
-  State<PemeriksaanBaru> createState() => _PemeriksaanBaruState();
+  State<NewMedicalExamScreen> createState() => _NewMedicalExamScreenState();
 }
 
-class _PemeriksaanBaruState extends State<PemeriksaanBaru> {
+class _NewMedicalExamScreenState extends State<NewMedicalExamScreen> {
   TextEditingController _dateController = TextEditingController();
 
   @override
@@ -51,7 +51,7 @@ class _PemeriksaanBaruState extends State<PemeriksaanBaru> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Klasifikasi()));
+                                builder: (context) => ClassificationScreen()));
                       },
                       child: Text("Mulai Klasifikasi")),
                 ),

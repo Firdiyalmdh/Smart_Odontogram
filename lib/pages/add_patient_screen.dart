@@ -3,14 +3,14 @@ import 'package:odontogram/components/pasien_model.dart';
 import 'package:odontogram/components/pasien_provider.dart';
 import 'package:provider/provider.dart';
 
-class TambahPasien extends StatefulWidget {
-  const TambahPasien({Key? key}) : super(key: key);
+class AddPatientScreen extends StatefulWidget {
+  const AddPatientScreen({Key? key}) : super(key: key);
 
   @override
-  _TambahPasienState createState() => _TambahPasienState();
+  _AddPatientScreenState createState() => _AddPatientScreenState();
 }
 
-class _TambahPasienState extends State<TambahPasien> {
+class _AddPatientScreenState extends State<AddPatientScreen> {
   TextEditingController _namaController = TextEditingController();
   TextEditingController _nikController = TextEditingController();
   TextEditingController _tempatLahirController = TextEditingController();

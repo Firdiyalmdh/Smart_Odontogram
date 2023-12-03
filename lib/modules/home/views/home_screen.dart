@@ -1,29 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:odontogram/components/appbar.dart';
 import 'package:odontogram/components/card_data_pasien.dart';
 import 'package:odontogram/components/search_form.dart';
-import 'tambah_pasien.dart';
+import 'package:odontogram/modules/home/index.dart';
+import '../../../pages/add_patient_screen.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
-
-  @override
-  State<Home> createState() => _Home();
-}
-
-class _Home extends State<Home> {
-  late TextEditingController _searchController;
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController = TextEditingController();
-  }
-
+class HomeScreen extends GetView<HomeController> {
+  const HomeScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(),
+      appBar: MyAppBar(
+        onLogoutClick: () {
+          controller.logout();
+        },
+      ),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
@@ -37,9 +29,7 @@ class _Home extends State<Home> {
                   fontWeight: FontWeight.bold,
                   color: Colors.grey[600]),
             ),
-            SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             Container(
               width: 390,
               height: 175,
@@ -52,7 +42,7 @@ class _Home extends State<Home> {
             SizedBox(
               height: 15,
             ),
-            SearchForm(searchController: _searchController),
+            SearchForm(searchController: controller.searchController),
             SizedBox(height: 15),
             Text(
               "Data Pasien",
@@ -73,7 +63,7 @@ class _Home extends State<Home> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => TambahPasien()),
+            MaterialPageRoute(builder: (context) => AddPatientScreen()),
           );
         },
       ),

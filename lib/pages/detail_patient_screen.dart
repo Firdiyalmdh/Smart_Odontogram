@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:odontogram/components/odontogram.dart';
 import 'package:odontogram/components/pasien_model.dart';
-import 'package:odontogram/pages/pemeriksaan_baru.dart';
+import 'package:odontogram/pages/new_medical_exam_screen.dart';
 
-class DetailPasien extends StatefulWidget {
-  final Pasien pasien;
-
-  const DetailPasien({Key? key, required this.pasien}) : super(key: key);
+class DetailPatientScreen extends StatefulWidget {
+  const DetailPatientScreen({Key? key}) : super(key: key);
 
   @override
-  State<DetailPasien> createState() => _DetailPasienState();
+  State<DetailPatientScreen> createState() => _DetailPatientScreenState();
 }
 
-class _DetailPasienState extends State<DetailPasien> {
+class _DetailPatientScreenState extends State<DetailPatientScreen> {
   late Pasien _pasien;
 
   @override
   void initState() {
     super.initState();
-    _pasien = widget.pasien;
+    _pasien = Pasien(
+      nama: "",
+      nik: "",
+      jenisKelamin: "",
+      tempatLahir: "",
+      tanggalLahir: "",
+    );
   }
 
   @override
@@ -55,7 +59,7 @@ class _DetailPasienState extends State<DetailPasien> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const PemeriksaanBaru(),
+                            builder: (context) => const NewMedicalExamScreen(),
                           ),
                         );
                       },

@@ -2,26 +2,29 @@ name: odontogram
 version: 1.0.0+1
 publish_to: none
 description: A new Flutter project.
-environment: 
-  sdk: '>=3.1.3 <4.0.0'
+environment:
+  sdk: ">=3.1.3 <4.0.0"
 
-dependencies: 
-  intl: ^0.17.0
-  image_picker: ^0.8.2
+dependencies:
+  cloud_firestore: ^4.13.3
   cupertino_icons: ^1.0.2
-  firebase_core: 2.22.0
+  equatable: ^2.0.5
+  firebase_auth: ^4.15.0
+  firebase_core: ^2.24.0
+  flutter:
+    sdk: flutter
+  get: ^4.6.5
+  image_picker: ^0.8.2
+  intl: ^0.17.0
   provider: ^6.1.1
-  flutter: 
-    sdk: flutter
 
-dev_dependencies: 
+dev_dependencies:
   flutter_lints: ^2.0.0
-  flutter_test: 
+  flutter_test:
     sdk: flutter
-  
 
-flutter: 
-  assets: 
+flutter:
+  assets:
     - assets/normal.png
     - assets/normal1.png
     - assets/sisa_akar.png
@@ -39,6 +42,5 @@ flutter:
     - assets/logo.png
     - assets/logoblue.png
     - assets/banner.png
-    
-  uses-material-design: true
 
+  uses-material-design: true

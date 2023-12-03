@@ -1,25 +1,29 @@
 {
-    "project_info": {
-        "project_number": "513370865823",
-        "project_id": "odontogram-firebase",
-        "storage_bucket": "odontogram-firebase.appspot.com"
-    },
-    "client": [{
-        "client_info": {
-            "mobilesdk_app_id": "1:513370865823:android:721cc273d908cafb3662aa",
-            "android_client_info": {
-                "package_name": "com.example.odontogram"
-            }
-        },
-        "oauth_client": [],
-        "api_key": [{
-            "current_key": "AIzaSyCR5L50RRWsrkyU0d8XmtYOzt-6Wh-3fj0"
-        }],
-        "services": {
-            "appinvite_service": {
-                "other_platform_oauth_client": []
-            }
+  "project_info": {
+    "project_number": "66452456919",
+    "project_id": "smart-odontogram",
+    "storage_bucket": "smart-odontogram.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66452456919:android:81de843ac3c60982d73792",
+        "android_client_info": {
+          "package_name": "com.example.odontogram"
         }
-    }],
-    "configuration_version": "1"
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvleD_8AnIjplQ_Kf1nJm4SeEMTd6BZo0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
 }
