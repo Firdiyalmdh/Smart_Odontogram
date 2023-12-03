@@ -25,7 +25,7 @@ class HomeController extends GetxController {
   @override
   void onReady() async {
     super.onReady();
-    await authService.getUserDetail();
+    await getUserDetail();
     patients.bindStream(getAllPatients());
   }
 

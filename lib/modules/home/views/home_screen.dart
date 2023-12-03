@@ -31,6 +31,10 @@ class HomeScreen extends GetView<HomeController> {
                     color: Colors.grey[600]),
               ),
             ),
+            Obx(() {
+              print(controller.user.value);
+              return SizedBox();
+            }),
             const SizedBox(height: 20),
             Container(
               width: 390,

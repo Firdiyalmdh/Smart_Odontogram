@@ -9,7 +9,15 @@ class AddPatientScreen extends GetView<AddPatientController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tambah Pasien"),
+        title: const Text(
+          "Tambah Pasien",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
         backgroundColor: Colors.blue[900],
       ),
       body: SingleChildScrollView(
@@ -55,8 +63,12 @@ class AddPatientScreen extends GetView<AddPatientController> {
               InputDecorator(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0)),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 2.0),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 2.0,
+                    horizontal: 10,
+                  ),
                 ),
                 child: DropdownButtonHideUnderline(
                   child: Obx(
@@ -72,11 +84,12 @@ class AddPatientScreen extends GetView<AddPatientController> {
                           ),
                         ),
                         DropdownMenuItem(
-                            value: "Perempuan",
-                            child: Text(
-                              "Perempuan",
-                              style: TextStyle(fontSize: 14),
-                            )),
+                          value: "Perempuan",
+                          child: Text(
+                            "Perempuan",
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
                       ],
                       onChanged: (value) {
                         controller.selectedGender.value = value.toString();
