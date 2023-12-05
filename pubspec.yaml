@@ -7,6 +7,7 @@ environment:
 
 dependencies:
   async: ^2.11.0
+  camera: ^0.10.5+5
   cloud_firestore: ^4.13.3
   cupertino_icons: ^1.0.2
   equatable: ^2.0.5
@@ -18,6 +19,7 @@ dependencies:
   image_picker: ^0.8.2
   intl: ^0.17.0
   provider: ^6.1.1
+  tflite: ^1.1.2
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -26,22 +28,6 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/normal.png
-    - assets/normal1.png
-    - assets/sisa_akar.png
-    - assets/sisa_akar1.png
-    - assets/impaksi.png
-    - assets/impaksi1.png
-    - assets/tumpatan.png
-    - assets/tumpatan1.png
-    - assets/karies.png
-    - assets/karies1.png
-    - assets/login_background.png
-    - assets/register_background.png
-    - assets/card_background.png
-    - assets/no_image.png
-    - assets/logo.png
-    - assets/logoblue.png
-    - assets/banner.png
+    - assets/
 
   uses-material-design: true

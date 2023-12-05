@@ -1,9 +1,8 @@
 import 'package:get/get.dart';
-import 'package:odontogram/pages/classification_screen.dart';
 import 'package:odontogram/modules/patient/index.dart';
 import 'package:odontogram/modules/home/index.dart';
 import 'package:odontogram/modules/auth/index.dart';
-import 'package:odontogram/pages/new_medical_exam_screen.dart';
+import 'package:odontogram/modules/medical_exam/index.dart';
 import 'package:odontogram/modules/splash/index.dart';
 import 'package:odontogram/routes/app_routes.dart';
 
@@ -45,14 +44,16 @@ class AppPages {
       binding: DetailPatientBinding(),
       preventDuplicates: true,
     ),
-    GetPage<NewMedicalExamScreen>(
+    GetPage<MedicalExamScreen>(
       name: AppRoutes.NEW_MEDICAL_EXAM,
-      page: () => const NewMedicalExamScreen(),
+      page: () => const MedicalExamScreen(),
+      binding: MedicalExamBinding(),
       preventDuplicates: true,
     ),
     GetPage<ClassificationScreen>(
       name: AppRoutes.CLASSIFICATION,
       page: () => const ClassificationScreen(),
+      binding: ClassificationBinding(),
       preventDuplicates: true,
     ),
   ];

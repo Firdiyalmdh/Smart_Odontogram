@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:get/get.dart';
 
 class Tooth extends Equatable {
   final String id;
@@ -68,3 +69,19 @@ enum ToothType {
 }
 
 enum ToothCondition { NORMAL, KARIES, TUMPATAN, SISA_AKAR, IMPAKSI }
+
+enum ToothQuadrant { QUADRANT_I, QUADRANT_II, QUADRANT_III, QUADRANT_IV }
+
+extension ToothQuadranExt on ToothQuadrant {
+  List<int> get idList => switch (this) {
+        ToothQuadrant.QUADRANT_I => List.generate(8, (index) => index + 11),
+        ToothQuadrant.QUADRANT_II => List.generate(8, (index) => index + 21),
+        ToothQuadrant.QUADRANT_III => List.generate(8, (index) => index + 41),
+        ToothQuadrant.QUADRANT_IV => List.generate(8, (index) => index + 31),
+      };
+
+  bool get isReverse =>
+      [ToothQuadrant.QUADRANT_I, ToothQuadrant.QUADRANT_III].contains(this);
+
+  String get title => name.toLowerCase().split("_").join(" ").capitalize ?? "";
+}
