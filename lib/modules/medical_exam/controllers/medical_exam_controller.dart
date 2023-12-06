@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:odontogram/remote/firebase/patient_service.dart';
-import 'package:odontogram/remote/firebase/tooth_service.dart';
+import 'package:odontogram/service/firebase/patient_service.dart';
+import 'package:odontogram/service/firebase/tooth_service.dart';
 
 class MedicalExamController extends GetxController {
   final ToothService toothService;

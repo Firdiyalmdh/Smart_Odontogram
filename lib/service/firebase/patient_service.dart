@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:odontogram/models/patient.dart';
-import 'package:odontogram/remote/dto/result.dart';
-import 'package:odontogram/remote/firebase/firebase_attr.dart';
+import 'package:odontogram/service/dto/result.dart';
+import 'package:odontogram/service/firebase/firebase_attr.dart';
 
 class PatientService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;

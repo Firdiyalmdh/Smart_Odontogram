@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:odontogram/remote/firebase/auth_service.dart';
+import 'package:odontogram/service/firebase/auth_service.dart';
 import 'package:odontogram/routes/app_routes.dart';
 
 class SplashController extends GetxController {

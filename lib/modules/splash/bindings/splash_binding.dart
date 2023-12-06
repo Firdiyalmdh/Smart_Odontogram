@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:odontogram/modules/splash/index.dart';
-import 'package:odontogram/remote/firebase/auth_service.dart';
+import 'package:odontogram/service/firebase/auth_service.dart';
 
 class SplashBinding extends Bindings {
   @override

@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:odontogram/models/patient.dart';
 import 'package:odontogram/models/user.dart';
 
-import 'package:odontogram/remote/firebase/auth_service.dart';
-import 'package:odontogram/remote/firebase/patient_service.dart';
+import 'package:odontogram/service/firebase/auth_service.dart';
+import 'package:odontogram/service/firebase/patient_service.dart';
 import 'package:odontogram/routes/app_routes.dart';
 
 class HomeController extends GetxController {

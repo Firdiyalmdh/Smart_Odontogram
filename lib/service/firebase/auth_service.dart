@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:odontogram/remote/dto/result.dart';
+import 'package:odontogram/service/dto/result.dart';
 import 'package:odontogram/models/user.dart' as model;
-import 'package:odontogram/remote/firebase/firebase_attr.dart';
+import 'package:odontogram/service/firebase/firebase_attr.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:odontogram/modules/auth/controllers/login_controller.dart';
-import 'package:odontogram/remote/firebase/auth_service.dart';
+import 'package:odontogram/service/firebase/auth_service.dart';
 
 class LoginBinding extends Bindings {
   @override

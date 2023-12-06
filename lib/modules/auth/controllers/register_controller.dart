@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:odontogram/remote/firebase/auth_service.dart';
+import 'package:odontogram/service/firebase/auth_service.dart';
 import 'package:odontogram/routes/app_routes.dart';
 
 class RegisterController extends GetxController {

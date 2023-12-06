@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:odontogram/models/patient.dart';
-import 'package:odontogram/remote/firebase/patient_service.dart';
+import 'package:odontogram/service/firebase/patient_service.dart';
 
 class AddPatientController extends GetxController {
   final PatientService patientService;
