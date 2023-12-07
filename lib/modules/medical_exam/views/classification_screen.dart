@@ -1,11 +1,10 @@
-import 'dart:async';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:odontogram/components/tooth_item.dart';
 import 'package:odontogram/models/recognition.dart';
+import 'package:odontogram/models/tooth.dart';
 import 'package:odontogram/modules/medical_exam/controllers/classification_controller.dart';
-import 'package:odontogram/service/ml/detector_service.dart';
 
 class ClassificationScreen extends GetView<ClassificationController> {
   const ClassificationScreen({Key? key}) : super(key: key);
@@ -14,30 +13,38 @@ class ClassificationScreen extends GetView<ClassificationController> {
   Widget build(BuildContext context) {
     ScreenParams.screenSize = MediaQuery.sizeOf(context);
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "Pemeriksaan Baru",
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          iconTheme: const IconThemeData(
+      appBar: AppBar(
+        title: const Text(
+          "Pemeriksaan Baru",
+          style: TextStyle(
             color: Colors.white,
           ),
-          backgroundColor: Colors.blue[900],
         ),
-        body: const DetectorWidget());
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+        backgroundColor: Colors.blue[900],
+        actions: [
+          TextButton(
+            onPressed: () {
+              controller.save();
+            },
+            child: const Text(
+              "Simpan",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          CameraViewerSection(),
+          OdontogramListSection(),
+          ActionSection()
+        ],
+      ),
+    );
   }
-
-  // Future _pickImageFromGallery() async {
-  //   final returnImage =
-  //       await ImagePicker().pickImage(source: ImageSource.gallery);
-
-  //   if (returnImage == null) return;
-  //   setState(() {
-  //     _selectedImage = File(returnImage.path);
-  //   });
-  // }
 
   // void _restartImage() {
   //   setState(() {
@@ -47,43 +54,151 @@ class ClassificationScreen extends GetView<ClassificationController> {
   // }
 }
 
-/// Individual bounding box
-class BoxWidget extends StatelessWidget {
-  final Recognition result;
-
-  const BoxWidget({super.key, required this.result});
+class CameraViewerSection extends StatelessWidget {
+  final ClassificationController controller = Get.find();
+  CameraViewerSection({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Color for bounding box
-    Color color = Colors.primaries[
-        (result.label.length + result.label.codeUnitAt(0) + result.id) %
-            Colors.primaries.length];
-
-    return Positioned(
-      left: result.renderLocation.left,
-      top: result.renderLocation.top,
-      width: result.renderLocation.width,
-      height: result.renderLocation.height,
-      child: Container(
-        width: result.renderLocation.width,
-        height: result.renderLocation.height,
-        decoration: BoxDecoration(
-            border: Border.all(color: color, width: 3),
-            borderRadius: const BorderRadius.all(Radius.circular(2))),
-        child: Align(
-          alignment: Alignment.topLeft,
-          child: FittedBox(
+    return GetX<ClassificationController>(
+      builder: (controller) {
+        if (!controller.isInitialized) {
+          return Container();
+        } else if (controller.image.isNotEmpty) {
+          return SizedBox(
+            height: Get.height - 300,
+            width: Get.width,
             child: Container(
-              color: color,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(result.label),
-                  Text(" ${result.score.toStringAsFixed(2)}"),
-                ],
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: MemoryImage(controller.image!),
+                ),
               ),
             ),
+          );
+        }
+        return SizedBox(
+          height: Get.height - 300,
+          width: Get.width,
+          child: CameraPreview(controller.cameraController),
+        );
+      },
+    );
+  }
+}
+
+class ActionSection extends StatelessWidget {
+  final ClassificationController controller = Get.find();
+  ActionSection({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Obx(
+          () => Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              controller.quadrant.value.icon,
+              width: 50,
+              height: 50,
+            ),
+          ),
+        ),
+        const Spacer(),
+        GestureDetector(
+          onTap: () => controller.capture(),
+          child: Container(
+            height: 100,
+            width: 100,
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.transparent,
+                border: Border.all(color: Colors.white, width: 5)),
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.camera,
+                  size: 60,
+                ),
+              ),
+            ),
+          ),
+        ),
+        const Spacer(),
+        Obx(
+          () => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: (controller.image.isNotEmpty)
+                ? IconButton(
+                    icon: const Icon(Icons.delete),
+                    iconSize: 32,
+                    style: IconButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        foregroundColor: Colors.white),
+                    onPressed: () {
+                      controller.resetImage();
+                    },
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.drive_folder_upload),
+                    iconSize: 32,
+                    style:
+                        IconButton.styleFrom(backgroundColor: Colors.white70),
+                    onPressed: () {
+                      controller.pickImageFromGallery();
+                    },
+                  ),
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class OdontogramListSection extends StatelessWidget {
+  final ClassificationController controller = Get.find();
+  OdontogramListSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Obx(
+          () => Row(
+            children: controller.result.entries
+                .map(
+                  (entry) => ToothItem(
+                    id: entry.key,
+                    data: entry.value,
+                    onTap: () {
+                      Get.dialog(
+                        ConditionModal(
+                          selectedValue: entry.value?.condition.obs ??
+                              ToothCondition.NORMAL.obs,
+                          onClose: (selectedCondition) {
+                            controller.editResult(
+                                entry.key,
+                                Tooth(
+                                    id: entry.key.toString(),
+                                    type: entry.key.toothType,
+                                    condition: selectedCondition));
+                            Get.back();
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                )
+                .toList(),
           ),
         ),
       ),
@@ -91,203 +206,78 @@ class BoxWidget extends StatelessWidget {
   }
 }
 
-/// Row for one Stats field
-class StatsWidget extends StatelessWidget {
-  final String left;
-  final String right;
+class ConditionModal extends StatelessWidget {
+  final ClassificationController controller = Get.find();
+  final Rx<ToothCondition> selectedValue;
+  final void Function(ToothCondition) onClose;
 
-  const StatsWidget(this.left, this.right, {super.key});
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text(left), Text(right)],
-        ),
-      );
-}
-
-/// [DetectorWidget] sends each frame for inference
-class DetectorWidget extends StatefulWidget {
-  /// Constructor
-  const DetectorWidget({super.key});
-
-  @override
-  State<DetectorWidget> createState() => _DetectorWidgetState();
-}
-
-class _DetectorWidgetState extends State<DetectorWidget>
-    with WidgetsBindingObserver {
-  /// List of available cameras
-  late List<CameraDescription> cameras;
-
-  /// Controller
-  CameraController? _cameraController;
-
-  // use only when initialized, so - not null
-  get _controller => _cameraController;
-
-  /// Object Detector is running on a background [Isolate]. This is nullable
-  /// because acquiring a [Detector] is an asynchronous operation. This
-  /// value is `null` until the detector is initialized.
-  Detector? _detector;
-  StreamSubscription? _subscription;
-
-  /// Results to draw bounding boxes
-  List<Recognition>? results;
-
-  /// Realtime stats
-  Map<String, String>? stats;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _initStateAsync();
-  }
-
-  void _initStateAsync() async {
-    // initialize preview and CameraImage stream
-    _initializeCamera();
-    // Spawn a new isolate
-    Detector.start().then((instance) {
-      setState(() {
-        _detector = instance;
-        _subscription = instance.resultsStream.stream.listen((values) {
-          setState(() {
-            results = values['recognitions'];
-            stats = values['stats'];
-          });
-        });
-      });
-    });
-  }
-
-  /// Initializes the camera by setting [_cameraController]
-  void _initializeCamera() async {
-    cameras = await availableCameras();
-    // cameras[0] for back-camera
-    _cameraController = CameraController(
-      cameras[0],
-      ResolutionPreset.medium,
-      enableAudio: false,
-    )..initialize().then((_) async {
-        await _controller.startImageStream(onLatestImageAvailable);
-        setState(() {});
-        ScreenParams.previewSize = _controller.value.previewSize!;
-      });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Return empty container while the camera is not initialized
-    if (_cameraController == null || !_controller.value.isInitialized) {
-      return const SizedBox.shrink();
-    }
-
-    var aspect = 1 / _controller.value.aspectRatio;
-
-    return Stack(
-      children: [
-        AspectRatio(
-          aspectRatio: aspect,
-          child: CameraPreview(_controller),
-        ),
-        // Stats
-        _statsWidget(),
-        // Bounding boxes
-        AspectRatio(
-          aspectRatio: aspect,
-          child: _boundingBoxes(),
-        ),
-      ],
-    );
-  }
-
-  Widget _statsWidget() => (stats != null)
-      ? Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            color: Colors.white.withAlpha(150),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: stats!.entries
-                    .map((e) => StatsWidget(e.key, e.value))
-                    .toList(),
-              ),
-            ),
-          ),
-        )
-      : const SizedBox.shrink();
-
-  /// Returns Stack of bounding boxes
-  Widget _boundingBoxes() {
-    if (results == null) {
-      return const SizedBox.shrink();
-    }
-    return Stack(
-        children: results!.map((box) => BoxWidget(result: box)).toList());
-  }
-
-  /// Callback to receive each frame [CameraImage] perform inference on it
-  void onLatestImageAvailable(CameraImage cameraImage) async {
-    _detector?.processFrame(cameraImage);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    switch (state) {
-      case AppLifecycleState.inactive:
-        _cameraController?.stopImageStream();
-        _detector?.stop();
-        _subscription?.cancel();
-        break;
-      case AppLifecycleState.resumed:
-        _initStateAsync();
-        break;
-      default:
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _cameraController?.dispose();
-    _detector?.stop();
-    _subscription?.cancel();
-    super.dispose();
-  }
-}
-
-class CardKlasifikasi extends StatelessWidget {
-  const CardKlasifikasi({
+  ConditionModal({
     super.key,
+    required this.selectedValue,
+    required this.onClose,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-          padding: const EdgeInsets.all(16.0),
+    return Dialog(
+      child: PopScope(
+        child: Container(
+          height: 200,
+          margin: const EdgeInsets.all(20),
           child: Column(
             children: [
-              Text(
-                "Jenis Gigi:",
-                style: TextStyle(
-                  fontSize: 16,
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Kondisi Gigi"),
+              ),
+              const SizedBox(height: 5),
+              InputDecorator(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(vertical: 2.0),
+                ),
+                child: Obx(
+                  () => DropdownButtonHideUnderline(
+                    child: DropdownButton(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 2, horizontal: 10),
+                      value: selectedValue.value,
+                      items: ToothCondition.values
+                          .map(
+                            (condition) => DropdownMenuItem(
+                              value: condition,
+                              child: Text(
+                                condition.name,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        selectedValue.value = value!;
+                      },
+                    ),
+                  ),
                 ),
               ),
-              Text(
-                "Kondisi Gigi:",
-                style: TextStyle(
-                  fontSize: 16,
+              const SizedBox(height: 15),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  onPressed: () => onClose(selectedValue.value),
+                  child: const Text("Simpan"),
                 ),
-              ),
+              )
             ],
-          )),
+          ),
+        ),
+      ),
     );
   }
 }

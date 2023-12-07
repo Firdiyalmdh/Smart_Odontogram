@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:odontogram/models/tooth.dart';
 
-class ToothType extends StatelessWidget {
+class ToothItem extends StatelessWidget {
   final int id;
   final Tooth? data;
   final void Function() onTap;
-  const ToothType({
+  
+  const ToothItem({
     super.key,
     required this.id,
     required this.data,
