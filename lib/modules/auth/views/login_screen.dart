@@ -90,8 +90,8 @@ class LoginScreen extends GetView<LoginController> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.blue[900],
-                          onPrimary: Colors.white,
+                          backgroundColor: Colors.blue[900],
+                          foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
                           ),

@@ -105,8 +105,8 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
               height: 50,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.blue[900],
-                  onPrimary: Colors.white,
+                  backgroundColor: Colors.blue[900],
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),

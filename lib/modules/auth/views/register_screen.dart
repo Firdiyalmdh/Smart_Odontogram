@@ -115,8 +115,8 @@ class RegisterScreen extends GetView<RegisterController> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 4),
-                          primary: Colors.blue[900],
-                          onPrimary: Colors.white,
+                          backgroundColor: Colors.blue[900],
+                          foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
                           ),
