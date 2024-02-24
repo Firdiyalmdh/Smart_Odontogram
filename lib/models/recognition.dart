@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:ui';
 
-/// Singleton to record size related data
 class ScreenParams {
   static late Size screenSize;
   static late Size previewSize;
@@ -14,21 +13,10 @@ class ScreenParams {
       Size(screenSize.width, screenSize.width * previewRatio);
 }
 
-/// Represents the recognition output from the model
 class Recognition {
-  /// Index of the result
   final int _id;
-
-  /// Label of the result
   final String _label;
-
-  /// Confidence [0.0, 1.0]
   final double _score;
-
-  /// Location of bounding box rect
-  ///
-  /// The rectangle corresponds to the raw input image
-  /// passed for inference
   final Rect _location;
 
   Recognition(this._id, this._label, this._score, this._location);
@@ -41,14 +29,9 @@ class Recognition {
 
   Rect get location => _location;
 
-  /// Returns bounding box rectangle corresponding to the
-  /// displayed image on screen
-  ///
-  /// This is the actual location where rectangle is rendered on
-  /// the screen
   Rect get renderLocation {
-    final double scaleX = ScreenParams.screenPreviewSize.width / 300;
-    final double scaleY = ScreenParams.screenPreviewSize.height / 300;
+    final double scaleX = ScreenParams.screenPreviewSize.width / 320;
+    final double scaleY = ScreenParams.screenPreviewSize.height / 320;
     return Rect.fromLTWH(
       location.left * scaleX,
       location.top * scaleY,

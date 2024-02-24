@@ -33,7 +33,7 @@ class DetailPatientScreen extends GetView<DetailPatientController> {
               const SizedBox(height: 20),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                child: Odontogram(toothList: controller.toothList.value),
+                child: Odontogram(toothList: controller.toothList),
               ),
               const SizedBox(height: 20),
               Row(
