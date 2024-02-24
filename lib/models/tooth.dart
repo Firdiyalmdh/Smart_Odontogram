@@ -84,4 +84,15 @@ extension ToothQuadranExt on ToothQuadrant {
       [ToothQuadrant.QUADRANT_I, ToothQuadrant.QUADRANT_III].contains(this);
 
   String get title => name.toLowerCase().split("_").join(" ").capitalize ?? "";
+
+  String get icon => switch (this) {
+        ToothQuadrant.QUADRANT_I => "assets/kuadran_1.png",
+        ToothQuadrant.QUADRANT_II => "assets/kuadran_2.png",
+        ToothQuadrant.QUADRANT_III => "assets/kuadran_3.png",
+        ToothQuadrant.QUADRANT_IV => "assets/kuadran_4.png",
+      };
+}
+
+extension ToothTypeIdExt on int {
+  ToothType get toothType => ToothType.values[this % 10 - 1];
 }

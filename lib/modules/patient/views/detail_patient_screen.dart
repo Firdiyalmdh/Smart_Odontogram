@@ -31,9 +31,9 @@ class DetailPatientScreen extends GetView<DetailPatientController> {
               const SizedBox(height: 20),
               CardDetailPasien(patient: controller.patient.value),
               const SizedBox(height: 20),
-              const SingleChildScrollView(
+              SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                child: Odontogram(),
+                child: Odontogram(toothList: controller.toothList),
               ),
               const SizedBox(height: 20),
               Row(
@@ -48,7 +48,8 @@ class DetailPatientScreen extends GetView<DetailPatientController> {
                           ),
                         ),
                         onPressed: () {
-                          Get.toNamed(AppRoutes.NEW_MEDICAL_EXAM);
+                          Get.toNamed(AppRoutes.NEW_MEDICAL_EXAM,
+                              arguments: controller.patient.value?.id ?? "");
                         },
                         child: const Text("Buat Pemeriksaan"),
                       ),

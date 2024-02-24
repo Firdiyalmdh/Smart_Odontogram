@@ -7,6 +7,7 @@ class MedicalExamController extends GetxController {
   final ToothService toothService;
   final PatientService patientService;
   RxBool isLoading = false.obs;
+  RxString patientId = "".obs;
 
   final medExamDateController = TextEditingController();
 
@@ -14,6 +15,12 @@ class MedicalExamController extends GetxController {
     required this.toothService,
     required this.patientService,
   });
+
+  @override
+  void onReady() {
+    super.onReady();
+    patientId.value = Get.arguments as String;
+  }
 
   Future<void> selectDate() async {
     DateTime? picked = await showDatePicker(

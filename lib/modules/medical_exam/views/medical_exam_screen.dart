@@ -58,10 +58,13 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   labelText: "Kuad\nran I",
                   labelAlign: TextAlign.left,
                   iconPosition: const Rect.fromLTRB(0, 0, 6, 6),
-                  iconAsset: "assets/kuadran_1.png",
+                  iconAsset: ToothQuadrant.QUADRANT_I.icon,
                   onTap: () {
                     Get.toNamed(AppRoutes.CLASSIFICATION,
-                        arguments: ToothQuadrant.QUADRANT_I);
+                        arguments: Map.of(<String, dynamic>{
+                          "quadrant": ToothQuadrant.QUADRANT_I,
+                          "patientId": controller.patientId.value
+                        }));
                   },
                 ),
                 MedicalExamButton(
@@ -69,10 +72,13 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   labelText: "Kuad\nran II",
                   labelAlign: TextAlign.right,
                   iconPosition: const Rect.fromLTRB(6, 0, 0, 6),
-                  iconAsset: "assets/kuadran_2.png",
+                  iconAsset: ToothQuadrant.QUADRANT_II.icon,
                   onTap: () {
                     Get.toNamed(AppRoutes.CLASSIFICATION,
-                        arguments: ToothQuadrant.QUADRANT_II);
+                        arguments: Map.of(<String, dynamic>{
+                          "quadrant": ToothQuadrant.QUADRANT_II,
+                          "patientId": controller.patientId.value
+                        }));
                   },
                 ),
                 MedicalExamButton(
@@ -80,10 +86,13 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   labelText: "Kuad\nran III",
                   labelAlign: TextAlign.left,
                   iconPosition: const Rect.fromLTRB(0, 6, 6, 0),
-                  iconAsset: "assets/kuadran_3.png",
+                  iconAsset: ToothQuadrant.QUADRANT_III.icon,
                   onTap: () {
                     Get.toNamed(AppRoutes.CLASSIFICATION,
-                        arguments: ToothQuadrant.QUADRANT_III);
+                        arguments: Map.of(<String, dynamic>{
+                          "quadrant": ToothQuadrant.QUADRANT_III,
+                          "patientId": controller.patientId.value
+                        }));
                   },
                 ),
                 MedicalExamButton(
@@ -91,10 +100,13 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   labelText: "Kuad\nran IV",
                   labelAlign: TextAlign.right,
                   iconPosition: const Rect.fromLTRB(6, 6, 0, 0),
-                  iconAsset: "assets/kuadran_4.png",
+                  iconAsset: ToothQuadrant.QUADRANT_IV.icon,
                   onTap: () {
                     Get.toNamed(AppRoutes.CLASSIFICATION,
-                        arguments: ToothQuadrant.QUADRANT_IV);
+                        arguments: Map.of(<String, dynamic>{
+                          "quadrant": ToothQuadrant.QUADRANT_IV,
+                          "patientId": controller.patientId.value
+                        }));
                   },
                 ),
               ],
