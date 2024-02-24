@@ -56,5 +56,11 @@ class AppPages {
       binding: ClassificationBinding(),
       preventDuplicates: true,
     ),
+    GetPage<NativeClassificationScreen>(
+      name: AppRoutes.NATIVE_CLASSIFICATION,
+      page: () => const NativeClassificationScreen(),
+      binding: NativeClassificationBinding(),
+      preventDuplicates: true,
+    ),
   ];
 }

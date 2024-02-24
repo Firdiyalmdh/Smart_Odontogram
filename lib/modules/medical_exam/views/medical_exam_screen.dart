@@ -60,7 +60,7 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   iconPosition: const Rect.fromLTRB(0, 0, 6, 6),
                   iconAsset: ToothQuadrant.QUADRANT_I.icon,
                   onTap: () {
-                    Get.toNamed(AppRoutes.CLASSIFICATION,
+                    Get.toNamed(AppRoutes.NATIVE_CLASSIFICATION,
                         arguments: Map.of(<String, dynamic>{
                           "quadrant": ToothQuadrant.QUADRANT_I,
                           "patientId": controller.patientId.value

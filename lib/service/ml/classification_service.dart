@@ -20,9 +20,9 @@ class ImageClassificationHelper {
   Future<void> _loadModel() async {
     final options = InterpreterOptions();
 
-    // if (Platform.isAndroid) {
-    //   options.addDelegate(XNNPackDelegate());
-    // }
+    if (Platform.isAndroid) {
+      options.addDelegate(XNNPackDelegate());
+    }
 
     if (Platform.isIOS) {
       options.addDelegate(GpuDelegate());
