@@ -2,6 +2,7 @@ buildscript {
     ext.kotlin_version = '1.9.0'
     repositories {
         google()
+        jcenter()
         mavenCentral()
     }
 
@@ -12,9 +13,14 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.google.dagger.hilt.android' version '2.46.1' apply false
+}
+
 allprojects {
     repositories {
         google()
+        jcenter()
         mavenCentral()
     }
 }

@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-        android:name="${applicationName}"
+        android:name=".SmartOdontogramApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="odontogram"
         android:requestLegacyExternalStorage="true">
         <activity
-            android:name=".ClassificationActivity"
+            android:name=".ui.screen.ClassificationActivity"
             android:exported="false"
             android:label="@string/title_activity_classification"
             android:theme="@style/Theme.Android" />

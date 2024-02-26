@@ -1,6 +1,7 @@
 package com.example.odontogram
 
 import android.content.Intent
+import com.example.odontogram.ui.screen.ClassificationActivity
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
