@@ -669,14 +669,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.1"
-  tflite_flutter:
-    dependency: "direct main"
-    description:
-      name: tflite_flutter
-      sha256: "38c6fa5c5197cadc595e596f7f307a03eaf68917bc14edb5bc8ba8585f6c230a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.10.3"
   typed_data:
     dependency: transitive
     description:

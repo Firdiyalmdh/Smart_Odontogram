@@ -1,8 +1,0 @@
-Seri_1
-Seri_2
-Taring
-Premolar_1
-Premolar_2
-Molar_1
-Molar_2
-Molar_3
