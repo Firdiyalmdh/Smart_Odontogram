@@ -12,8 +12,11 @@ class NativeClassificationController extends GetxController {
   @override
   void onReady() async {
     super.onReady();
-    print("test controller");
-    result.value = await nativeClassificationService.runNativeClassification();
-    result; // TODO call api to save it into firebase
+    final args = Get.arguments as Map<String, dynamic>;
+    result.value = await nativeClassificationService.runNativeClassification(
+      args['patientId'] ?? "",
+      args['quadrant']
+    );
+    result; // TODO show toast and back to new medical exam screen
   }
 }

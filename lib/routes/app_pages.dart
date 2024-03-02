@@ -50,12 +50,6 @@ class AppPages {
       binding: MedicalExamBinding(),
       preventDuplicates: true,
     ),
-    GetPage<ClassificationScreen>(
-      name: AppRoutes.CLASSIFICATION,
-      page: () => const ClassificationScreen(),
-      binding: ClassificationBinding(),
-      preventDuplicates: true,
-    ),
     GetPage<NativeClassificationScreen>(
       name: AppRoutes.NATIVE_CLASSIFICATION,
       page: () => const NativeClassificationScreen(),

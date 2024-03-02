@@ -2,11 +2,12 @@ package com.example.odontogram.data
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import android.view.Surface
 import androidx.compose.ui.graphics.toComposeRect
 import androidx.core.graphics.toRect
-import com.example.odontogram.domain.Detection
-import com.example.odontogram.domain.ToothTypeDetector
+import com.example.odontogram.domain.entity.Detection
+import com.example.odontogram.domain.service.ToothTypeDetector
 import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
@@ -62,11 +63,13 @@ class TfLiteToothTypeDetector(
 
         val results = detector?.detect(tensorImage, imageProcessingOptions)
 
+        Log.d("coba", "detect: ${results?.first()?.categories.toString()} ${results?.first()?.boundingBox}")
+
         return results?.map {
             Detection(
                 label = it.categories.first().label,
                 score = it.categories.first().score,
-                boundingBox = it.boundingBox.toRect().toComposeRect()
+                boundingBox = it.boundingBox.toRect()
             )
         }?.distinctBy { it.label } ?: emptyList()
     }

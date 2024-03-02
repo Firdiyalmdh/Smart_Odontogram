@@ -2,9 +2,8 @@ package com.example.odontogram.data
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.view.Surface
-import com.example.odontogram.domain.Classification
-import com.example.odontogram.domain.ToothConditionClassifier
+import com.example.odontogram.domain.entity.Classification
+import com.example.odontogram.domain.service.ToothConditionClassifier
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.ops.CastOp
@@ -12,7 +11,6 @@ import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
-import org.tensorflow.lite.task.core.vision.ImageProcessingOptions
 
 class TfLiteToothConditionClassifier(
     private val context: Context,
@@ -45,20 +43,14 @@ class TfLiteToothConditionClassifier(
     }
 
     override fun classify(bitmap: Bitmap, rotation: Int): List<Classification> {
-        if (classifier == null) {
-            setupClassifier()
-        }
+        if (classifier == null) setupClassifier()
 
         val imageProcessor = ImageProcessor.Builder()
             .add(ResizeOp(300, 300, ResizeOp.ResizeMethod.BILINEAR))
-            .add(NormalizeOp(0f, 1f))
             .add(CastOp(DataType.FLOAT32))
+            .add(NormalizeOp(0f, 1f))
             .build()
         val tensorImage = imageProcessor.process(TensorImage.fromBitmap(bitmap))
-
-        val imageProcessingOptions = ImageProcessingOptions.builder()
-            .setOrientation(getOrientationFromRotation(rotation))
-            .build()
 
         val results = classifier?.classify(tensorImage)
 
@@ -68,14 +60,5 @@ class TfLiteToothConditionClassifier(
                 score = it.score
             )
         }?.distinctBy { it.name } ?: emptyList()
-    }
-
-    private fun getOrientationFromRotation(rotation: Int): ImageProcessingOptions.Orientation {
-        return when (rotation) {
-            Surface.ROTATION_270 -> ImageProcessingOptions.Orientation.BOTTOM_RIGHT
-            Surface.ROTATION_90 -> ImageProcessingOptions.Orientation.TOP_LEFT
-            Surface.ROTATION_180 -> ImageProcessingOptions.Orientation.RIGHT_BOTTOM
-            else -> ImageProcessingOptions.Orientation.RIGHT_TOP
-        }
     }
 }

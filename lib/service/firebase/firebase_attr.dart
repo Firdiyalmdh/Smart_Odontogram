@@ -18,6 +18,7 @@ const String BIRTH_DATE_PROP = "birth_date";
 const String LAST_CHECKUP_DATE_PROP = "last_checkup_date";
 const String TOOTH_TYPE_PROP = "tooth_type";
 const String TOOTH_CONDITION_PROP = "tooth_condition";
+const String IMAGE_PATH = "image_path";
 
 extension UserExt on User {
   Map<String, dynamic> toMap() {
@@ -77,6 +78,7 @@ extension MapExt on Map<String, dynamic> {
       id: id,
       type: ToothType.values.byName(this[TOOTH_TYPE_PROP]),
       condition: ToothCondition.values.byName(this[TOOTH_CONDITION_PROP]),
+      imagePath: this[IMAGE_PATH],
     );
   }
 }

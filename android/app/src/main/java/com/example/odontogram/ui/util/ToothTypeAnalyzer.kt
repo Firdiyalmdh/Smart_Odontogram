@@ -2,14 +2,19 @@ package com.example.odontogram.ui.util
 
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import com.example.odontogram.domain.Detection
-import com.example.odontogram.domain.ToothTypeDetector
+import com.example.odontogram.domain.entity.Detection
+import com.example.odontogram.domain.service.ToothTypeDetector
+import javax.inject.Inject
 
-class ToothTypeAnalyzer(
-    private val detector: ToothTypeDetector,
-    private val onResults: (List<Detection>) -> Unit
+class ToothTypeAnalyzer @Inject constructor(
+    private val detector: ToothTypeDetector
 ) : ImageAnalysis.Analyzer {
     private var frameSkipCounter = 0
+    private var onResults: ((List<Detection>) -> Unit)? = null
+
+    fun setOnResult(onResults: (List<Detection>) -> Unit) {
+        this.onResults = onResults
+    }
 
     override fun analyze(image: ImageProxy) {
         if(frameSkipCounter % 60 == 0) {
@@ -19,7 +24,7 @@ class ToothTypeAnalyzer(
                 .centerCrop(321, 321)
 
             val results = detector.detect(bitmap, rotationDegrees)
-            onResults(results)
+            onResults?.invoke(results)
         }
         frameSkipCounter++
 

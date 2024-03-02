@@ -6,6 +6,5 @@ abstract class AppRoutes {
   static const String ADD_PATIENT = "/add-patient";
   static const String DETAIL_PATIENT = "/detail-patient";
   static const String NEW_MEDICAL_EXAM = "/new-medical-exam";
-  static const String CLASSIFICATION = "/classification";
   static const String NATIVE_CLASSIFICATION = "/native-classification";
 }

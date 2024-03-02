@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:odontogram/models/tooth.dart';
 
 class NativeClassificationService {
   static const nativeChannelName = 'com.example.smartodontogram';
@@ -6,10 +7,15 @@ class NativeClassificationService {
 
   static const navigateFunctionName = 'nativeClassification';
 
-  Future<String> runNativeClassification() async {
+  Future<String> runNativeClassification(String userid, ToothQuadrant quadrant) async {
     try {
-      print("test");
-      var data = await methodChannel.invokeMethod(navigateFunctionName);
+      var data = await methodChannel.invokeMethod(
+        navigateFunctionName,
+        {
+          'userId': userid,
+          'quadrant': quadrant.intRepresentative
+        }
+      );
       return data;
     } on PlatformException catch (e) {
       return 'Failed to invoke: ${e.message}';

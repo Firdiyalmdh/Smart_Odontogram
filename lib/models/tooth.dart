@@ -5,11 +5,13 @@ class Tooth extends Equatable {
   final String id;
   final ToothType type;
   final ToothCondition condition;
+  final String imagePath;
 
   const Tooth({
     required this.id,
     required this.type,
     required this.condition,
+    required this.imagePath,
   });
 
   String get icon {
@@ -91,6 +93,13 @@ extension ToothQuadranExt on ToothQuadrant {
         ToothQuadrant.QUADRANT_III => "assets/kuadran_3.png",
         ToothQuadrant.QUADRANT_IV => "assets/kuadran_4.png",
       };
+  
+  int get intRepresentative => switch(this) {
+    ToothQuadrant.QUADRANT_I => 1,
+    ToothQuadrant.QUADRANT_II => 2,
+    ToothQuadrant.QUADRANT_III => 3,
+    ToothQuadrant.QUADRANT_IV => 4
+  };
 }
 
 extension ToothTypeIdExt on int {

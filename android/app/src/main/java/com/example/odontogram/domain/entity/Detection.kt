@@ -1,6 +1,6 @@
-package com.example.odontogram.domain
+package com.example.odontogram.domain.entity
 
-import androidx.compose.ui.geometry.Rect
+import android.graphics.Rect
 
 data class Detection(
     val label: String,

@@ -10,12 +10,13 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
+import kotlin.math.exp
 
 class CustomImageClassifier(
     context: Context,
     modelPath: String,
     labelPath: String,
-    val options: Options
+    private val options: Options
 ) {
     private val interpreter: Interpreter
     private val labels: MutableList<String> = mutableListOf()
@@ -48,7 +49,7 @@ class CustomImageClassifier(
             inputTensorBuffer = resizedImage.tensorBuffer
         }
 
-        val outputTensor = Array(1) { FloatArray(NUM_CLASSES) }
+        val outputTensor = Array(1) { FloatArray(labels.size) }
         interpreter.run(inputTensorBuffer.buffer, outputTensor)
         return getTopKLabels(softmax(outputTensor[0]))
     }
@@ -74,16 +75,14 @@ class CustomImageClassifier(
     }
 
     private fun softmax(logits: FloatArray): FloatArray {
-        // Compute the sum of exponentials of the logits
         var sumOfExp = 0.0f
         for (logit in logits) {
-            sumOfExp += Math.exp(logit.toDouble()).toFloat()
+            sumOfExp += exp(logit.toDouble()).toFloat()
         }
 
-        // Apply softmax to each logit
         val probabilities = FloatArray(logits.size)
         for (i in logits.indices) {
-            probabilities[i] = Math.exp(logits[i].toDouble()).toFloat() / sumOfExp
+            probabilities[i] = exp(logits[i].toDouble()).toFloat() / sumOfExp
         }
 
         return probabilities
@@ -99,9 +98,9 @@ class CustomImageClassifier(
             private var maxResult = 999
             private var scoreThreshold = 0.5f
 
-            fun setMaxResult(maxResult: Int) = apply { this@Builder.maxResult = maxResult }
-            fun setScoreThreshold(scoreThreshold: Float) = apply { this@Builder.scoreThreshold = scoreThreshold }
-            fun setBaseOptions(baseOptions: Interpreter.Options) = apply { this@Builder.baseOptions = baseOptions }
+            fun setMaxResult(maxResult: Int) = apply { this.maxResult = maxResult }
+            fun setScoreThreshold(scoreThreshold: Float) = apply { this.scoreThreshold = scoreThreshold }
+            fun setBaseOptions(baseOptions: Interpreter.Options) = apply { this.baseOptions = baseOptions }
             fun build() = Options(
                 baseOptions = baseOptions,
                 maxResult = maxResult,
@@ -112,9 +111,5 @@ class CustomImageClassifier(
         companion object {
             fun builder() = Builder()
         }
-    }
-
-    companion object {
-        private const val NUM_CLASSES = 5 // Change according to your model
     }
 }

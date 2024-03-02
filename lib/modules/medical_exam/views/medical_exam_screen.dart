@@ -74,7 +74,7 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   iconPosition: const Rect.fromLTRB(6, 0, 0, 6),
                   iconAsset: ToothQuadrant.QUADRANT_II.icon,
                   onTap: () {
-                    Get.toNamed(AppRoutes.CLASSIFICATION,
+                    Get.toNamed(AppRoutes.NATIVE_CLASSIFICATION,
                         arguments: Map.of(<String, dynamic>{
                           "quadrant": ToothQuadrant.QUADRANT_II,
                           "patientId": controller.patientId.value
@@ -88,7 +88,7 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   iconPosition: const Rect.fromLTRB(0, 6, 6, 0),
                   iconAsset: ToothQuadrant.QUADRANT_III.icon,
                   onTap: () {
-                    Get.toNamed(AppRoutes.CLASSIFICATION,
+                    Get.toNamed(AppRoutes.NATIVE_CLASSIFICATION,
                         arguments: Map.of(<String, dynamic>{
                           "quadrant": ToothQuadrant.QUADRANT_III,
                           "patientId": controller.patientId.value
@@ -102,7 +102,7 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   iconPosition: const Rect.fromLTRB(6, 6, 0, 0),
                   iconAsset: ToothQuadrant.QUADRANT_IV.icon,
                   onTap: () {
-                    Get.toNamed(AppRoutes.CLASSIFICATION,
+                    Get.toNamed(AppRoutes.NATIVE_CLASSIFICATION,
                         arguments: Map.of(<String, dynamic>{
                           "quadrant": ToothQuadrant.QUADRANT_IV,
                           "patientId": controller.patientId.value

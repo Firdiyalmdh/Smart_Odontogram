@@ -1,4 +1,4 @@
-package com.example.odontogram.domain
+package com.example.odontogram.domain.entity
 
 data class Classification(
     val name: String,
