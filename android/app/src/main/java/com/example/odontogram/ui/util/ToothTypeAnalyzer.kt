@@ -19,9 +19,7 @@ class ToothTypeAnalyzer @Inject constructor(
     override fun analyze(image: ImageProxy) {
         if(frameSkipCounter % 60 == 0) {
             val rotationDegrees = image.imageInfo.rotationDegrees
-            val bitmap = image
-                .toBitmap()
-                .centerCrop(321, 321)
+            val bitmap = image.toBitmap()
 
             val results = detector.detect(bitmap, rotationDegrees)
             onResults?.invoke(results)

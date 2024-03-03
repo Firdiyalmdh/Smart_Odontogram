@@ -11,6 +11,7 @@ import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
+import org.tensorflow.lite.support.image.ops.Rot90Op
 
 class TfLiteToothConditionClassifier(
     private val context: Context,
@@ -46,6 +47,7 @@ class TfLiteToothConditionClassifier(
         if (classifier == null) setupClassifier()
 
         val imageProcessor = ImageProcessor.Builder()
+            .add(Rot90Op(-rotation / 90))
             .add(ResizeOp(300, 300, ResizeOp.ResizeMethod.BILINEAR))
             .add(CastOp(DataType.FLOAT32))
             .add(NormalizeOp(0f, 1f))

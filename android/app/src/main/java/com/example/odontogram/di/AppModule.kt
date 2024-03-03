@@ -22,7 +22,7 @@ object AppModule {
     fun provideToothTypeDetector(@ApplicationContext context: Context): ToothTypeDetector =
         TfLiteToothTypeDetector(
             context = context,
-            threshold = 0.25f,
+            threshold = 0.35f,
             maxResults = 1
         )
 
@@ -31,7 +31,7 @@ object AppModule {
     fun provideToothConditionClassifier(@ApplicationContext context: Context): ToothConditionClassifier =
         TfLiteToothConditionClassifier(
             context = context,
-            threshold = 0.5f,
+            threshold = 0.35f,
             maxResults = 1
         )
 

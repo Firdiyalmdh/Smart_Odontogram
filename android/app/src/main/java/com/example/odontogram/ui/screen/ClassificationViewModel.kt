@@ -50,13 +50,14 @@ class ClassificationViewModel @Inject constructor(
 
     fun classify(image: ImageProxy) = viewModelScope.launch {
         val rotationDegrees = image.imageInfo.rotationDegrees
-        val bitmap = image
-            .toBitmap()
-            .centerCrop(300, 300)
+        val bitmap = image.toBitmap()
+        image.close()
 
         val results = toothConditionClassifier.classify(bitmap, rotationDegrees)
         if (detections.isNotEmpty() && results.isNotEmpty()) {
             _eventChannel.send(Event.OnResult(detections.first().label, results.first().name))
+        } else {
+            _eventChannel.send(Event.OnNotFound)
         }
     }
 

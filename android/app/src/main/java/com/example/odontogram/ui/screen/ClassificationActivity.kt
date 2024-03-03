@@ -12,24 +12,29 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.camera.core.AspectRatio.RATIO_4_3
 import androidx.camera.core.ExperimentalGetImage
+import androidx.camera.core.ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.CameraController.IMAGE_ANALYSIS
 import androidx.camera.view.CameraController.IMAGE_CAPTURE
+import androidx.camera.view.CameraController.OutputSize
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -41,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -55,11 +61,13 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -139,10 +147,12 @@ fun CameraScreen(
     onSave: () -> Unit
 ) = with(viewModel) {
     val context = LocalContext.current
-    val config = LocalConfiguration.current
 
     val controller = remember {
         LifecycleCameraController(context).apply {
+            previewTargetSize = OutputSize(RATIO_4_3)
+            imageAnalysisTargetSize = OutputSize(RATIO_4_3)
+            imageAnalysisBackpressureStrategy = STRATEGY_KEEP_ONLY_LATEST
             setEnabledUseCases(IMAGE_ANALYSIS.or(IMAGE_CAPTURE))
             setImageAnalysisAnalyzer(
                 ContextCompat.getMainExecutor(context),
@@ -171,28 +181,34 @@ fun CameraScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .systemBarsPadding()
+            .background(Color.DarkGray)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(config.screenWidthDp.dp)
+                .aspectRatio(3 / 4f)
         ) {
+            var previewSize by remember { mutableStateOf(IntSize(0, 0)) }
+
             CameraPreview(
                 controller = controller,
                 modifier = Modifier
                     .fillMaxSize()
+                    .onGloballyPositioned { previewSize = it.size }
             )
 
             OverlayView(
                 detections = detections,
-                previewHeight = config.screenWidthDp.dp,
-                previewWidth = config.screenWidthDp.dp,
+                previewHeight = previewSize.height.pxToDp(),
+                previewWidth = previewSize.width.pxToDp(),
                 modifier = Modifier
                     .fillMaxSize()
             )
         }
 
         Column(
+            verticalArrangement = Arrangement.Bottom,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
@@ -290,7 +306,7 @@ fun OverlayView(
     previewWidth: Dp,
     modifier: Modifier = Modifier,
 ) {
-    val config = LocalConfiguration.current
+    val imageSize = 320.pxToDp()
     var scaleFactor by remember { mutableFloatStateOf(1f) }
     val paint = textPaint()
     val textList = detections.map { result ->
@@ -298,19 +314,19 @@ fun OverlayView(
         Triple(text, textWidth(text, paint), textHeight(paint))
     }
 
-//    LaunchedEffect(previewHeight, previewWidth) {
-//        scaleFactor = max(config.screenWidthDp.dp * 1f / previewWidth, config.screenHeightDp.dp * 1f / previewHeight)
-//    }
+    LaunchedEffect(previewHeight, previewWidth) {
+        scaleFactor = max(previewWidth * 1f / imageSize, previewHeight * 1f / imageSize)
+    }
 
     Canvas(modifier = modifier.fillMaxSize()) {
         detections.forEachIndexed { index, result ->
             val boundingBox = result.boundingBox
             val (text, textWidth, textHeight) = textList[index]
 
-            val top = (boundingBox.top.dp * scaleFactor).toPx()
-            val bottom = (boundingBox.bottom.dp * scaleFactor).toPx()
-            val left = (boundingBox.left.dp * scaleFactor).toPx()
-            val right = (boundingBox.right.dp * scaleFactor).toPx()
+            val top = boundingBox.top * scaleFactor
+            val bottom = boundingBox.bottom * scaleFactor
+            val left = boundingBox.left * scaleFactor
+            val right = boundingBox.right * scaleFactor
 
             // Draw bounding box around detected objects
             drawRect(
@@ -377,6 +393,9 @@ fun <T : Any> EventListener(
         }
     }
 }
+
+@Composable
+fun Int.pxToDp() = with(LocalDensity.current) { toDp() }
 
 private fun takePhoto(
     context: Context,

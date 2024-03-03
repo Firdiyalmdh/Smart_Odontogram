@@ -11,6 +11,7 @@ import com.example.odontogram.domain.service.ToothTypeDetector
 import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
+import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.task.core.BaseOptions
 import org.tensorflow.lite.task.core.vision.ImageProcessingOptions
 import org.tensorflow.lite.task.vision.detector.ObjectDetector
@@ -54,7 +55,9 @@ class TfLiteToothTypeDetector(
             setupDetector()
         }
 
-        val imageProcessor = ImageProcessor.Builder().build()
+        val imageProcessor = ImageProcessor.Builder()
+            .add(ResizeOp(320, 320, ResizeOp.ResizeMethod.BILINEAR))
+            .build()
         val tensorImage = imageProcessor.process(TensorImage.fromBitmap(bitmap))
 
         val imageProcessingOptions = ImageProcessingOptions.builder()
@@ -62,8 +65,6 @@ class TfLiteToothTypeDetector(
             .build()
 
         val results = detector?.detect(tensorImage, imageProcessingOptions)
-
-        Log.d("coba", "detect: ${results?.first()?.categories.toString()} ${results?.first()?.boundingBox}")
 
         return results?.map {
             Detection(
