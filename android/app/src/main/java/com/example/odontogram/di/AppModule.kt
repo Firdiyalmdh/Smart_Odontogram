@@ -1,8 +1,10 @@
 package com.example.odontogram.di
 
 import android.content.Context
+import com.example.odontogram.data.FirebaseRepositoryImpl
 import com.example.odontogram.data.TfLiteToothConditionClassifier
 import com.example.odontogram.data.TfLiteToothTypeDetector
+import com.example.odontogram.domain.repository.FirebaseRepository
 import com.example.odontogram.domain.service.ToothConditionClassifier
 import com.example.odontogram.domain.service.ToothTypeDetector
 import com.example.odontogram.ui.util.ToothTypeAnalyzer
@@ -38,4 +40,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideToothTypeAnalyzer(detector: ToothTypeDetector): ToothTypeAnalyzer = ToothTypeAnalyzer(detector)
+
+    @Provides
+    @Singleton
+    fun provideFirebaseRepository(): FirebaseRepository = FirebaseRepositoryImpl()
 }

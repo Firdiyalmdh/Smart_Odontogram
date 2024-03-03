@@ -6,6 +6,6 @@ import com.example.odontogram.domain.entity.Tooth
 import kotlinx.coroutines.flow.Flow
 
 interface FirebaseRepository {
-    fun uploadImage(bitmap: Bitmap): Flow<Resource<String>>
-    fun saveMedicalExamResult(data: List<Tooth>): Flow<Resource<Boolean>>
+    suspend fun uploadImage(patientId: String, bitmap: Bitmap): Flow<Resource<String>>
+    suspend fun saveMedicalExamResult(patientId: String, data: List<Tooth>): Flow<Resource<Boolean>>
 }

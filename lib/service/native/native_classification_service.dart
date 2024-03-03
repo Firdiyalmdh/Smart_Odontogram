@@ -7,12 +7,12 @@ class NativeClassificationService {
 
   static const navigateFunctionName = 'nativeClassification';
 
-  Future<String> runNativeClassification(String userid, ToothQuadrant quadrant) async {
+  Future<String> runNativeClassification(String patientId, ToothQuadrant quadrant) async {
     try {
       var data = await methodChannel.invokeMethod(
         navigateFunctionName,
         {
-          'userId': userid,
+          'patientId': patientId,
           'quadrant': quadrant.intRepresentative
         }
       );

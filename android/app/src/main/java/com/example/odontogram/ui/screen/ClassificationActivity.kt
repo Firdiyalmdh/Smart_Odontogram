@@ -4,6 +4,7 @@ import android.Manifest.permission.CAMERA
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Rect
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.TIRAMISU
@@ -24,24 +25,36 @@ import androidx.camera.view.CameraController.OutputSize
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,6 +70,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.NativePaint
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
@@ -70,14 +84,21 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import coil.compose.AsyncImage
 import com.example.odontogram.R
 import com.example.odontogram.domain.entity.Detection
+import com.example.odontogram.domain.entity.Tooth
+import com.example.odontogram.domain.entity.ToothCondition
+import com.example.odontogram.domain.entity.ToothType
+import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnError
 import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnNotFound
 import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnResult
+import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnSuccess
 import com.example.odontogram.ui.theme.AndroidTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -94,7 +115,9 @@ class ClassificationActivity : ComponentActivity() {
         val quadrant = intent.extras?.getInt(ARG_QUADRANT) ?: 1
 
         setContent {
-            AndroidTheme {
+            AndroidTheme(
+                darkTheme = false
+            ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -109,7 +132,7 @@ class ClassificationActivity : ComponentActivity() {
                             patientId = patientId,
                             quadrant = quadrant,
                             onShowToast = ::showToast,
-                            onSave = {
+                            onSaved = {
                                 val replyIntent = Intent()
                                 replyIntent.putExtra(ARG_RESULT, "Coba")
                                 setResult(RESULT_OK, replyIntent)
@@ -144,9 +167,11 @@ fun CameraScreen(
     patientId: String,
     quadrant: Int,
     onShowToast: (String) -> Unit,
-    onSave: () -> Unit
+    onSaved: () -> Unit
 ) = with(viewModel) {
     val context = LocalContext.current
+    var showSaveModal by remember { mutableStateOf(false) }
+    var selectedTooth by remember { mutableStateOf<Tooth?>(null) }
 
     val controller = remember {
         LifecycleCameraController(context).apply {
@@ -169,11 +194,19 @@ fun CameraScreen(
     EventListener(flow = eventChannelFlow) {
         when (it) {
             is OnResult -> {
-                onShowToast(it.type + it.condition)
+                showSaveModal = true
             }
 
             is OnNotFound -> {
                 onShowToast("Tidak terdeteksi!")
+            }
+
+            is OnError -> {
+                onShowToast(it.message)
+            }
+
+            is OnSuccess -> {
+                onSaved()
             }
         }
     }
@@ -182,7 +215,7 @@ fun CameraScreen(
         modifier = Modifier
             .fillMaxSize()
             .systemBarsPadding()
-            .background(Color.DarkGray)
+            .background(Color.White)
     ) {
         Box(
             modifier = Modifier
@@ -213,12 +246,44 @@ fun CameraScreen(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Button(onClick = { /*TODO on back press*/ }) {
+                    Text(text = "Batalkan")
+                }
+
+                Button(onClick = { saveQuadrant() }) {
+                    Text(text = "Simpan")
+                }
+            }
+
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                // TODO add list of odontogram result here
+                items(toothData.toMap().keys.toList()) {
+                    val tooth = toothData[it]
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.clickable {
+                            if (tooth != null) selectedTooth = tooth
+                            else onShowToast("Data masih kosong! isi data untuk gigi $it terlebih dahulu!")
+                        }
+                    ) {
+                        AsyncImage(
+                            model = tooth?.icon ?: R.drawable.tooth_empty,
+                            contentDescription = "Tooth Icon",
+                            modifier = Modifier.size(56.dp)
+                        )
+                        Text(text = it.toString())
+                    }
+                }
             }
 
             Row(
@@ -234,7 +299,8 @@ fun CameraScreen(
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_folder_copy),
-                        contentDescription = "open gallery"
+                        contentDescription = "open gallery",
+                        tint = Color.LightGray
                     )
                 }
 
@@ -254,9 +320,9 @@ fun CameraScreen(
                         .size(56.dp)
                         .clip(CircleShape),
                     colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Gray,
-                        disabledContainerColor = Color.LightGray,
+                        containerColor = Color.LightGray,
+                        contentColor = Color.DarkGray,
+                        disabledContainerColor = Color.DarkGray,
                         disabledContentColor = Color.Red
                     )
                 ) {
@@ -274,11 +340,38 @@ fun CameraScreen(
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_flip_camera),
-                        contentDescription = "switch camera"
+                        contentDescription = "switch camera",
+                        tint = Color.LightGray
                     )
                 }
             }
         }
+    }
+
+    if (showSaveModal) {
+        DetailToothDialog(
+            bitmap = toothImage,
+            selectedToothType = type,
+            selectedToothCondition = condition,
+            onToothTypeSelected = ::setToothType,
+            onToothConditionSelected = ::setToothCondition,
+            onSave = ::saveResult,
+            onDismiss = { showSaveModal = false }
+        )
+    }
+
+    if (selectedTooth != null) {
+        DetailToothDialog(
+            imageUrl = selectedTooth?.imagePath,
+            selectedToothType = selectedTooth?.type ?: ToothType.SERI_1,
+            selectedToothCondition = selectedTooth?.condition ?: ToothCondition.NORMAL,
+            onToothTypeSelected = { selectedTooth = selectedTooth?.copy(type = it) },
+            onToothConditionSelected = { selectedTooth = selectedTooth?.copy(condition = it) },
+            onSave = {
+                selectedTooth?.id?.toInt()?.let { toothData[it] = selectedTooth }
+            },
+            onDismiss = { selectedTooth = null }
+        )
     }
 }
 
@@ -390,6 +483,115 @@ fun <T : Any> EventListener(
     LaunchedEffect(flow) {
         lifecycleOwner.repeatOnLifecycle(lifeCycleState) {
             flow.collect(collector)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DetailToothDialog(
+    bitmap: Bitmap? = null,
+    imageUrl: String? = null,
+    selectedToothType: ToothType,
+    selectedToothCondition: ToothCondition,
+    onToothTypeSelected: (ToothType) -> Unit,
+    onToothConditionSelected: (ToothCondition) -> Unit,
+    onSave: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        var isToothTypeExpanded by remember { mutableStateOf(false) }
+        var isToothConditionExpanded by remember { mutableStateOf(false) }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .background(Color.White)
+        ) {
+            bitmap?.let {
+                Image(bitmap = it.asImageBitmap(), contentDescription = null)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            imageUrl?.let {
+                AsyncImage(model = it, contentDescription = null)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            ExposedDropdownMenuBox(
+                expanded = isToothTypeExpanded,
+                onExpandedChange = {
+                    isToothTypeExpanded = !isToothTypeExpanded
+                }
+            ) {
+                TextField(
+                    value = selectedToothType.name,
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isToothTypeExpanded) },
+                    modifier = Modifier.menuAnchor()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = isToothTypeExpanded,
+                    onDismissRequest = { isToothTypeExpanded = false }
+                ) {
+                    ToothType.entries.forEach { toothType ->
+                        DropdownMenuItem(
+                            onClick = {
+                                onToothTypeSelected(toothType)
+                                isToothTypeExpanded = false
+                            },
+                            text = { Text(toothType.name) }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ExposedDropdownMenuBox(
+                expanded = isToothConditionExpanded,
+                onExpandedChange = {
+                    isToothConditionExpanded = !isToothConditionExpanded
+                }
+            ) {
+                TextField(
+                    value = selectedToothCondition.name,
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isToothConditionExpanded) },
+                    modifier = Modifier.menuAnchor()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = isToothConditionExpanded,
+                    onDismissRequest = { isToothConditionExpanded = false }
+                ) {
+                    ToothCondition.entries.forEach { condition ->
+                        DropdownMenuItem(
+                            onClick = {
+                                onToothConditionSelected(condition)
+                                isToothConditionExpanded = false
+                            },
+                            text = { Text(condition.name) }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    onDismiss()
+                    onSave()
+                }
+            ) {
+                Text("Save")
+            }
         }
     }
 }

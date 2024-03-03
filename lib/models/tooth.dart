@@ -16,9 +16,9 @@ class Tooth extends Equatable {
 
   String get icon {
     switch (type) {
-      case ToothType.INCISOR_1:
-      case ToothType.INCISOR_2:
-      case ToothType.CANINE:
+      case ToothType.SERI_1:
+      case ToothType.SERI_2:
+      case ToothType.TARING:
         return getClosedIcon();
       default:
         return getOpenIcon();
@@ -60,9 +60,9 @@ class Tooth extends Equatable {
 }
 
 enum ToothType {
-  INCISOR_1,
-  INCISOR_2,
-  CANINE,
+  SERI_1,
+  SERI_2,
+  TARING,
   PREMOLAR_1,
   PREMOLAR_2,
   MOLAR_1,
