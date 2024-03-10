@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:odontogram/components/medical_exam_button.dart';
 import 'package:odontogram/models/tooth.dart';
 import 'package:odontogram/modules/medical_exam/index.dart';
-import 'package:odontogram/routes/app_routes.dart';
 
 class MedicalExamScreen extends GetView<MedicalExamController> {
   const MedicalExamScreen({super.key});
@@ -46,7 +45,7 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
               onTap: controller.selectDate,
             ),
             const SizedBox(height: 15),
-            GridView.count(
+            Obx(() => GridView.count(
               primary: false,
               shrinkWrap: true,
               crossAxisSpacing: 10,
@@ -59,12 +58,10 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   labelAlign: TextAlign.left,
                   iconPosition: const Rect.fromLTRB(0, 0, 6, 6),
                   iconAsset: ToothQuadrant.QUADRANT_I.icon,
+                  checkPosition: const Rect.fromLTRB(16, 0, 0, 16),
+                  isFilled: controller.resultMap[ToothQuadrant.QUADRANT_I] ?? false,
                   onTap: () {
-                    Get.toNamed(AppRoutes.NATIVE_CLASSIFICATION,
-                        arguments: Map.of(<String, dynamic>{
-                          "quadrant": ToothQuadrant.QUADRANT_I,
-                          "patientId": controller.patientId.value
-                        }));
+                    controller.navigateToClassification(ToothQuadrant.QUADRANT_I);
                   },
                 ),
                 MedicalExamButton(
@@ -73,12 +70,10 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   labelAlign: TextAlign.right,
                   iconPosition: const Rect.fromLTRB(6, 0, 0, 6),
                   iconAsset: ToothQuadrant.QUADRANT_II.icon,
+                  checkPosition: const Rect.fromLTRB(0, 0, 16, 16),
+                  isFilled: controller.resultMap[ToothQuadrant.QUADRANT_II] ?? false,
                   onTap: () {
-                    Get.toNamed(AppRoutes.NATIVE_CLASSIFICATION,
-                        arguments: Map.of(<String, dynamic>{
-                          "quadrant": ToothQuadrant.QUADRANT_II,
-                          "patientId": controller.patientId.value
-                        }));
+                    controller.navigateToClassification(ToothQuadrant.QUADRANT_II);
                   },
                 ),
                 MedicalExamButton(
@@ -87,12 +82,10 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   labelAlign: TextAlign.left,
                   iconPosition: const Rect.fromLTRB(0, 6, 6, 0),
                   iconAsset: ToothQuadrant.QUADRANT_III.icon,
+                  checkPosition: const Rect.fromLTRB(16, 16, 0, 0),
+                  isFilled: controller.resultMap[ToothQuadrant.QUADRANT_III] ?? false,
                   onTap: () {
-                    Get.toNamed(AppRoutes.NATIVE_CLASSIFICATION,
-                        arguments: Map.of(<String, dynamic>{
-                          "quadrant": ToothQuadrant.QUADRANT_III,
-                          "patientId": controller.patientId.value
-                        }));
+                    controller.navigateToClassification(ToothQuadrant.QUADRANT_III);
                   },
                 ),
                 MedicalExamButton(
@@ -101,16 +94,14 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   labelAlign: TextAlign.right,
                   iconPosition: const Rect.fromLTRB(6, 6, 0, 0),
                   iconAsset: ToothQuadrant.QUADRANT_IV.icon,
+                  checkPosition: const Rect.fromLTRB(0, 16, 16, 0),
+                  isFilled: controller.resultMap[ToothQuadrant.QUADRANT_IV] ?? false,
                   onTap: () {
-                    Get.toNamed(AppRoutes.NATIVE_CLASSIFICATION,
-                        arguments: Map.of(<String, dynamic>{
-                          "quadrant": ToothQuadrant.QUADRANT_IV,
-                          "patientId": controller.patientId.value
-                        }));
+                    controller.navigateToClassification(ToothQuadrant.QUADRANT_IV);
                   },
                 ),
               ],
-            ),
+            )),
             const Spacer(),
             SizedBox(
               width: double.infinity,

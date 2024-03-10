@@ -5,6 +5,8 @@ class MedicalExamButton extends StatelessWidget {
   final TextAlign labelAlign;
   final Rect iconPosition;
   final String iconAsset;
+  final bool isFilled;
+  final Rect checkPosition;
   final void Function() onTap;
 
   const MedicalExamButton({
@@ -14,6 +16,8 @@ class MedicalExamButton extends StatelessWidget {
     required this.labelAlign,
     required this.iconPosition,
     required this.iconAsset,
+    required this.isFilled,
+    required this.checkPosition,
     required this.onTap,
   });
 
@@ -54,7 +58,17 @@ class MedicalExamButton extends StatelessWidget {
                 iconAsset,
                 scale: 0.75,
               ),
-            )
+            ),
+            (isFilled) ? Positioned(
+              left: getOrNull(checkPosition.left),
+              top: getOrNull(checkPosition.top),
+              right: getOrNull(checkPosition.right),
+              bottom: getOrNull(checkPosition.bottom),
+              child: const Icon(
+                Icons.check_circle_rounded,
+                color: Colors.green,
+              ),
+            ) : const SizedBox()
           ],
         ),
       ),

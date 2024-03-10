@@ -5,17 +5,27 @@ import 'package:odontogram/modules/medical_exam/index.dart';
 class NativeClassificationScreen extends GetView<NativeClassificationController> {
   const NativeClassificationScreen({Key? key}) : super(key: key);
 
+  Widget child(String value) {
+    if (value == "") {
+      return const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 12),
+          Text("Menyiapkan Kamera...")
+        ]
+      );
+    } else {
+      Get.back(result: value);
+      return Text(value);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Obx(() => Center(
-          child: (controller.result.value == "") ? const Column(
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 12),
-              Text("Menyimpan data ke Firebase...")
-            ]
-          ) : Text(controller.result.value),
+          child: child(controller.result.value),
         ),
       ),
     );

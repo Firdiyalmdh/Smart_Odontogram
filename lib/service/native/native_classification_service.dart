@@ -3,9 +3,8 @@ import 'package:odontogram/models/tooth.dart';
 
 class NativeClassificationService {
   static const nativeChannelName = 'com.example.smartodontogram';
-  static const methodChannel = MethodChannel(nativeChannelName);
-
   static const navigateFunctionName = 'nativeClassification';
+  static const methodChannel = MethodChannel(nativeChannelName);
 
   Future<String> runNativeClassification(String patientId, ToothQuadrant quadrant) async {
     try {
