@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.camera.core.AspectRatio.RATIO_4_3
 import androidx.camera.core.ExperimentalGetImage
@@ -39,11 +40,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -52,9 +55,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -80,9 +86,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
@@ -114,6 +123,15 @@ class ClassificationActivity : ComponentActivity() {
         val patientId = intent.extras?.getString(ARG_PATIENT_ID).orEmpty()
         val quadrant = intent.extras?.getInt(ARG_QUADRANT) ?: 1
 
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val replyIntent = Intent()
+                replyIntent.putExtra(ARG_RESULT, "FAILED")
+                setResult(RESULT_OK, replyIntent)
+                finish()
+            }
+        })
+
         setContent {
             AndroidTheme(
                 darkTheme = false
@@ -134,10 +152,11 @@ class ClassificationActivity : ComponentActivity() {
                             onShowToast = ::showToast,
                             onSaved = {
                                 val replyIntent = Intent()
-                                replyIntent.putExtra(ARG_RESULT, "Coba")
+                                replyIntent.putExtra(ARG_RESULT, "SUCCESS")
                                 setResult(RESULT_OK, replyIntent)
                                 finish()
-                            }
+                            },
+                            onBackPressed = { onBackPressedDispatcher.onBackPressed() }
                         )
                     } else {
                         LaunchedEffect(Unit) {
@@ -160,6 +179,7 @@ class ClassificationActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @androidx.annotation.OptIn(ExperimentalGetImage::class)
 @Composable
 fun CameraScreen(
@@ -167,7 +187,8 @@ fun CameraScreen(
     patientId: String,
     quadrant: Int,
     onShowToast: (String) -> Unit,
-    onSaved: () -> Unit
+    onSaved: () -> Unit,
+    onBackPressed: () -> Unit
 ) = with(viewModel) {
     val context = LocalContext.current
     var showSaveModal by remember { mutableStateOf(false) }
@@ -211,138 +232,157 @@ fun CameraScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .systemBarsPadding()
-            .background(Color.White)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(3 / 4f)
-        ) {
-            var previewSize by remember { mutableStateOf(IntSize(0, 0)) }
-
-            CameraPreview(
-                controller = controller,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .onGloballyPositioned { previewSize = it.size }
-            )
-
-            OverlayView(
-                detections = detections,
-                previewHeight = previewSize.height.pxToDp(),
-                previewWidth = previewSize.width.pxToDp(),
-                modifier = Modifier
-                    .fillMaxSize()
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color(0xff0D48A1),
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                ),
+                title = {
+                    Text(
+                        "Pemeriksaan Kuadran $quadrant",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(end = 16.dp)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBackPressed) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                },
+                actions = {
+                    Button(onClick = ::saveQuadrant) {
+                        Text(text = "Simpan")
+                    }
+                },
             )
         }
-
+    ) {
         Column(
-            verticalArrangement = Arrangement.Bottom,
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+                .padding(it)
+                .background(Color.White)
         ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .aspectRatio(3 / 4f)
             ) {
-                Button(onClick = { /*TODO on back press*/ }) {
-                    Text(text = "Batalkan")
-                }
+                var previewSize by remember { mutableStateOf(IntSize(0, 0)) }
 
-                Button(onClick = { saveQuadrant() }) {
-                    Text(text = "Simpan")
-                }
+                CameraPreview(
+                    controller = controller,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .onGloballyPositioned { previewSize = it.size }
+                )
+
+                OverlayView(
+                    detections = detections,
+                    previewHeight = previewSize.height.pxToDp(),
+                    previewWidth = previewSize.width.pxToDp(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
             }
 
-            LazyRow(
+            Column(
+                verticalArrangement = Arrangement.Bottom,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .weight(1f)
             ) {
-                items(toothData.toMap().keys.toList()) {
-                    val tooth = toothData[it]
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.clickable {
-                            if (tooth != null) selectedTooth = tooth
-                            else onShowToast("Data masih kosong! isi data untuk gigi $it terlebih dahulu!")
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    items(toothData.toMap().keys.toList()) {
+                        val tooth = toothData[it]
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.clickable {
+                                if (tooth != null) selectedTooth = tooth
+                                else onShowToast("Data masih kosong! isi data untuk gigi $it terlebih dahulu!")
+                            }
+                        ) {
+                            AsyncImage(
+                                model = tooth?.icon ?: R.drawable.tooth_empty,
+                                contentDescription = "Tooth Icon",
+                                modifier = Modifier.size(48.dp)
+                            )
+                            Text(text = it.toString())
                         }
-                    ) {
-                        AsyncImage(
-                            model = tooth?.icon ?: R.drawable.tooth_empty,
-                            contentDescription = "Tooth Icon",
-                            modifier = Modifier.size(56.dp)
-                        )
-                        Text(text = it.toString())
                     }
                 }
-            }
 
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                // OPEN GALLERY BUTTON
-                IconButton(
-                    onClick = { /*TODO OPEN GALLERY*/ }
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_folder_copy),
-                        contentDescription = "open gallery",
-                        tint = Color.LightGray
-                    )
-                }
-
-                // TAKE PICTURE BUTTON
-                IconButton(
-                    onClick = {
-                        takePhoto(
-                            context = context,
-                            controller = controller,
-                            onPhotoTaken = ::classify,
-                            onError = onShowToast
-                        )
-                    },
-                    enabled = detections.isNotEmpty(),
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .padding(8.dp)
-                        .size(56.dp)
-                        .clip(CircleShape),
-                    colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = Color.LightGray,
-                        contentColor = Color.DarkGray,
-                        disabledContainerColor = Color.DarkGray,
-                        disabledContentColor = Color.Red
-                    )
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
                 ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(
-                            if (detections.isNotEmpty()) R.drawable.ic_camera
-                            else R.drawable.ic_camera_off
-                        ),
-                        contentDescription = "Take Picture"
-                    )
-                }
+                    // OPEN GALLERY BUTTON
+                    IconButton(
+                        onClick = { /*TODO OPEN GALLERY*/ }
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_folder_copy),
+                            contentDescription = "open gallery",
+                            tint = Color.LightGray
+                        )
+                    }
 
-                IconButton(
-                    onClick = { /*TODO SWITCH CAMERA*/ }
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_flip_camera),
-                        contentDescription = "switch camera",
-                        tint = Color.LightGray
-                    )
+                    // TAKE PICTURE BUTTON
+                    IconButton(
+                        onClick = {
+                            takePhoto(
+                                context = context,
+                                controller = controller,
+                                onPhotoTaken = ::classify,
+                                onError = onShowToast
+                            )
+                        },
+                        enabled = detections.isNotEmpty(),
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(56.dp)
+                            .clip(CircleShape),
+                        colors = IconButtonDefaults.filledIconButtonColors(
+                            containerColor = Color.LightGray,
+                            contentColor = Color.DarkGray,
+                            disabledContainerColor = Color.DarkGray,
+                            disabledContentColor = Color.Red
+                        )
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(
+                                if (detections.isNotEmpty()) R.drawable.ic_camera
+                                else R.drawable.ic_camera_off
+                            ),
+                            contentDescription = "Take Picture"
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { /*TODO SWITCH CAMERA*/ }
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_flip_camera),
+                            contentDescription = "switch camera",
+                            tint = Color.LightGray
+                        )
+                    }
                 }
             }
         }
