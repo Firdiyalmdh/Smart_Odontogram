@@ -1,9 +1,10 @@
 package com.example.odontogram.ui.screen
 
 import android.graphics.Bitmap
-import androidx.camera.core.ImageProxy
+import android.graphics.Canvas
+import android.graphics.Rect
+import android.util.Log
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -21,11 +22,10 @@ import com.example.odontogram.domain.entity.getIdList
 import com.example.odontogram.domain.entity.toToothQuadrant
 import com.example.odontogram.domain.repository.FirebaseRepository
 import com.example.odontogram.domain.service.ToothConditionClassifier
+import com.example.odontogram.domain.service.ToothTypeDetector
 import com.example.odontogram.ui.util.ToothTypeAnalyzer
-import com.example.odontogram.ui.util.centerCrop
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,17 +34,19 @@ import javax.inject.Inject
 class ClassificationViewModel @Inject constructor(
     private val toothTypeAnalyzer: ToothTypeAnalyzer,
     private val toothConditionClassifier: ToothConditionClassifier,
+    private val toothTypeDetector: ToothTypeDetector,
     private val firebase: FirebaseRepository
 ) : ViewModel() {
 
     private var patientId by mutableStateOf("")
-    private var quadrant by mutableStateOf(ToothQuadrant.QUADRANT_I)
+    var quadrant by mutableStateOf(ToothQuadrant.QUADRANT_I)
+        private set
     var condition by mutableStateOf(ToothCondition.NORMAL)
-    private set
+        private set
     var type by mutableStateOf(ToothType.SERI_1)
-    private set
+        private set
     var toothImage by mutableStateOf<Bitmap?>(null)
-    private set
+        private set
     val detections = mutableStateListOf<Detection>()
     val toothData = mutableStateMapOf<Int, Tooth?>()
     var isLoading by mutableStateOf(false)
@@ -66,6 +68,7 @@ class ClassificationViewModel @Inject constructor(
     fun setQuadrantValue(value: Int) {
         quadrant = value.toToothQuadrant()
         quadrant.getIdList().forEach { toothData[it] = null }
+        Log.d("coba", "${quadrant.getIdList()} ${toothData.toMap().keys.toList()}")
     }
 
     fun setToothType(new: ToothType) {
@@ -78,18 +81,31 @@ class ClassificationViewModel @Inject constructor(
 
     fun getToothTypeAnalyzer() = toothTypeAnalyzer
 
-    fun classify(image: ImageProxy) = viewModelScope.launch {
-        val rotationDegrees = image.imageInfo.rotationDegrees
-        val bitmap = image.toBitmap()
-        image.close()
+    fun classify(bitmap: Bitmap, rotationDegrees: Int) = viewModelScope.launch {
+        try {
+            if (detections.isEmpty()) throw Exception()
+            val results = toothConditionClassifier.classify(
+                bitmap.crop(detections.first().boundingBox),
+                rotationDegrees
+            )
 
-        val results = toothConditionClassifier.classify(bitmap, rotationDegrees)
-        if (detections.isNotEmpty() && results.isNotEmpty()) {
+            if (results.isEmpty()) throw Exception()
             condition = ToothCondition.valueOf(results.first().name.uppercase())
             type = ToothType.valueOf(detections.first().label.uppercase())
             toothImage = bitmap
             _eventChannel.send(Event.OnResult)
-        } else {
+        } catch (e: Exception) {
+            _eventChannel.send(Event.OnNotFound)
+        }
+    }
+
+    fun detect(bitmap: Bitmap) = viewModelScope.launch {
+        try {
+            val results = toothTypeDetector.detect(bitmap, 0)
+            if (results.isEmpty()) throw Exception()
+            detections.addAll(results)
+            classify(bitmap, 0)
+        } catch (e: Exception) {
             _eventChannel.send(Event.OnNotFound)
         }
     }
@@ -103,6 +119,7 @@ class ClassificationViewModel @Inject constructor(
                         isLoading = false
                         _eventChannel.send(Event.OnError(result.message.orEmpty()))
                     }
+
                     is Resource.Success -> {
                         val id = type.getId(quadrant)
                         toothData[id] = Tooth(
@@ -125,9 +142,20 @@ class ClassificationViewModel @Inject constructor(
                     isLoading = false
                     _eventChannel.send(Event.OnError(result.message.orEmpty()))
                 }
-                is Resource.Success -> { _eventChannel.send(Event.OnSuccess) }
+
+                is Resource.Success -> {
+                    _eventChannel.send(Event.OnSuccess)
+                }
             }
         }
+    }
+
+    private fun Bitmap.crop(rect: Rect): Bitmap {
+        val croppedBitmap = Bitmap.createBitmap(rect.width(), rect.height(), Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(croppedBitmap)
+        val destRect = Rect(0, 0, rect.width(), rect.height())
+        canvas.drawBitmap(this, rect, destRect, null)
+        return croppedBitmap
     }
 
     sealed interface Event {

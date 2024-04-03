@@ -2,10 +2,13 @@ package com.example.odontogram.ui.screen
 
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.TIRAMISU
 import android.os.Bundle
@@ -13,7 +16,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.AspectRatio.RATIO_4_3
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST
@@ -59,7 +64,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -103,7 +107,9 @@ import com.example.odontogram.R
 import com.example.odontogram.domain.entity.Detection
 import com.example.odontogram.domain.entity.Tooth
 import com.example.odontogram.domain.entity.ToothCondition
+import com.example.odontogram.domain.entity.ToothQuadrant
 import com.example.odontogram.domain.entity.ToothType
+import com.example.odontogram.domain.entity.isReverse
 import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnError
 import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnNotFound
 import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnResult
@@ -113,6 +119,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
+import java.io.FileNotFoundException
+import java.io.InputStream
 import kotlin.math.max
 
 @AndroidEntryPoint
@@ -148,7 +156,7 @@ class ClassificationActivity : ComponentActivity() {
                     if (permissions.allPermissionsGranted) {
                         CameraScreen(
                             patientId = patientId,
-                            quadrant = quadrant,
+                            quadrantId = quadrant,
                             onShowToast = ::showToast,
                             onSaved = {
                                 val replyIntent = Intent()
@@ -185,7 +193,7 @@ class ClassificationActivity : ComponentActivity() {
 fun CameraScreen(
     viewModel: ClassificationViewModel = hiltViewModel(),
     patientId: String,
-    quadrant: Int,
+    quadrantId: Int,
     onShowToast: (String) -> Unit,
     onSaved: () -> Unit,
     onBackPressed: () -> Unit
@@ -207,9 +215,18 @@ fun CameraScreen(
         }
     }
 
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { result ->
+            result?.let { uri ->
+                getBitmapFromUri(context, uri)?.let { detect(it) }
+            }
+        }
+    )
+
     LaunchedEffect(Unit) {
         setPatientIdValue(patientId)
-        setQuadrantValue(quadrant)
+        setQuadrantValue(quadrantId)
     }
 
     EventListener(flow = eventChannelFlow) {
@@ -242,7 +259,7 @@ fun CameraScreen(
                 ),
                 title = {
                     Text(
-                        "Pemeriksaan Kuadran $quadrant",
+                        "Pemeriksaan Kuadran $quadrantId",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontSize = 16.sp,
@@ -265,10 +282,10 @@ fun CameraScreen(
                 },
             )
         }
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = Modifier
-                .padding(it)
+                .padding(paddingValues)
                 .background(Color.White)
         ) {
             Box(
@@ -305,7 +322,7 @@ fun CameraScreen(
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    items(toothData.toMap().keys.toList()) {
+                    items(toothData.toMap().keys.toList().reversed(quadrant)) {
                         val tooth = toothData[it]
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -332,9 +349,8 @@ fun CameraScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
-                    // OPEN GALLERY BUTTON
                     IconButton(
-                        onClick = { /*TODO OPEN GALLERY*/ }
+                        onClick = { imagePicker.launch("image/*") }
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_folder_copy),
@@ -642,7 +658,7 @@ fun Int.pxToDp() = with(LocalDensity.current) { toDp() }
 private fun takePhoto(
     context: Context,
     controller: LifecycleCameraController,
-    onPhotoTaken: (ImageProxy) -> Unit,
+    onPhotoTaken: (Bitmap, Int) -> Unit,
     onError: (String) -> Unit
 ) {
     controller.takePicture(
@@ -650,7 +666,10 @@ private fun takePhoto(
         object : ImageCapture.OnImageCapturedCallback() {
             override fun onCaptureSuccess(image: ImageProxy) {
                 super.onCaptureSuccess(image)
-                onPhotoTaken(image)
+                val orientation = image.imageInfo.rotationDegrees
+                val bitmap = image.toBitmap()
+                image.close()
+                onPhotoTaken(bitmap, orientation)
             }
 
             override fun onError(exception: ImageCaptureException) {
@@ -661,3 +680,16 @@ private fun takePhoto(
         }
     )
 }
+
+fun getBitmapFromUri(context: Context, uri: Uri): Bitmap? {
+    return try {
+        val contentResolver: ContentResolver = context.contentResolver
+        val inputStream: InputStream? = contentResolver.openInputStream(uri)
+        BitmapFactory.decodeStream(inputStream)
+    } catch (e: FileNotFoundException) {
+        e.printStackTrace()
+        null
+    }
+}
+
+fun <T> List<T>.reversed(quadrant: ToothQuadrant): List<T> = if (quadrant.isReverse()) reversed() else this
