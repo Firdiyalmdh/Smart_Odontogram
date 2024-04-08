@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_protected_member
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:odontogram/components/odontogram.dart';
@@ -7,6 +9,7 @@ import 'package:odontogram/routes/app_routes.dart';
 
 class DetailPatientScreen extends GetView<DetailPatientController> {
   const DetailPatientScreen({Key? key}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -23,42 +26,43 @@ class DetailPatientScreen extends GetView<DetailPatientController> {
         ),
         backgroundColor: Colors.blue[900],
       ),
-      body: Obx(
-        () => GestureDetector(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 20),
-              CardDetailPasien(patient: controller.patient.value),
-              const SizedBox(height: 20),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Odontogram(toothList: controller.toothList),
+      body: Obx(() => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 20),
+            CardDetailPasien(patient: controller.patient.value),
+            const SizedBox(height: 20),
+            Expanded(
+              child: Align(
+                alignment: Alignment.center,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Odontogram(toothList: controller.toothList.value),
+                ),
               ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.all(15),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(15),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
-                        onPressed: () {
-                          Get.toNamed(AppRoutes.NEW_MEDICAL_EXAM,
-                              arguments: controller.patient.value?.id ?? "");
-                        },
-                        child: const Text("Buat Pemeriksaan"),
                       ),
+                      onPressed: () {
+                        Get.toNamed(AppRoutes.NEW_MEDICAL_EXAM,
+                            arguments: controller.patient.value?.id ?? "");
+                      },
+                      child: const Text("Buat Pemeriksaan"),
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -94,7 +98,7 @@ class CardDetailPasien extends StatelessWidget {
                   Text("Jenis kelamin: ${patient!.gender}"),
                   Text("NIK: ${patient!.nik}"),
                   Text(
-                      "Tempat tanggal lahir: ${patient!.birthPlace}, ${patient!.birthDate}"),
+                      "TTL: ${patient!.birthPlace}, ${patient!.birthDate}"),
                   Text(
                       "Pemeriksaan terakhir: ${patient!.lastCheckupDate ?? 'Belum ada pemeriksaan'}"),
                 ],

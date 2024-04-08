@@ -16,9 +16,9 @@ const String GENDER_PROP = "gender";
 const String BIRTH_PLACE_PROP = "birth_place";
 const String BIRTH_DATE_PROP = "birth_date";
 const String LAST_CHECKUP_DATE_PROP = "last_checkup_date";
-const String TOOTH_TYPE_PROP = "tooth_type";
-const String TOOTH_CONDITION_PROP = "tooth_condition";
-const String IMAGE_PATH = "image_path";
+const String TOOTH_TYPE_PROP = "type";
+const String TOOTH_CONDITION_PROP = "condition";
+const String IMAGE_PATH = "imagePath";
 
 extension UserExt on User {
   Map<String, dynamic> toMap() {
