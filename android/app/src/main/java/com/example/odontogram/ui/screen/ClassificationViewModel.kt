@@ -3,7 +3,6 @@ package com.example.odontogram.ui.screen
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -68,7 +67,9 @@ class ClassificationViewModel @Inject constructor(
     fun setQuadrantValue(value: Int) {
         quadrant = value.toToothQuadrant()
         quadrant.getIdList().forEach { toothData[it] = null }
-        Log.d("coba", "${quadrant.getIdList()} ${toothData.toMap().keys.toList()}")
+//        quadrant.getIdList().forEachIndexed { index, id ->
+//            toothData[id] = dummyData[index].copy(id = id.toString())
+//        }
     }
 
     fun setToothType(new: ToothType) {
@@ -134,22 +135,6 @@ class ClassificationViewModel @Inject constructor(
         }
     }
 
-    fun saveQuadrant() = viewModelScope.launch {
-        firebase.saveMedicalExamResult(patientId, toothData.toMap().mapNotNull { it.value }).collect { result ->
-            when (result) {
-                is Resource.Loading -> isLoading = true
-                is Resource.Error -> {
-                    isLoading = false
-                    _eventChannel.send(Event.OnError(result.message.orEmpty()))
-                }
-
-                is Resource.Success -> {
-                    _eventChannel.send(Event.OnSuccess)
-                }
-            }
-        }
-    }
-
     private fun Bitmap.crop(rect: Rect): Bitmap {
         val croppedBitmap = Bitmap.createBitmap(rect.width(), rect.height(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(croppedBitmap)
@@ -162,6 +147,16 @@ class ClassificationViewModel @Inject constructor(
         data object OnResult : Event
         data object OnNotFound : Event
         data class OnError(val message: String) : Event
-        data object OnSuccess : Event
     }
+
+    private val dummyData = listOf(
+        Tooth("1", ToothType.SERI_1, ToothCondition.NORMAL, "https://firebasestorage.googleapis.com/v0/b/smart-odontogram.appspot.com/o/medical_records%2F8NW3AJSaD5dzAmKqTM6O%2F1712213261646?alt=media&token=07fabec6-920c-463a-b03e-fa9d7aab6368"),
+        Tooth("2", ToothType.SERI_2, ToothCondition.KARIES, "https://firebasestorage.googleapis.com/v0/b/smart-odontogram.appspot.com/o/medical_records%2F8NW3AJSaD5dzAmKqTM6O%2F1712213261646?alt=media&token=07fabec6-920c-463a-b03e-fa9d7aab6368"),
+        Tooth("3", ToothType.TARING, ToothCondition.TUMPATAN, "https://firebasestorage.googleapis.com/v0/b/smart-odontogram.appspot.com/o/medical_records%2F8NW3AJSaD5dzAmKqTM6O%2F1712213261646?alt=media&token=07fabec6-920c-463a-b03e-fa9d7aab6368"),
+        Tooth("4", ToothType.PREMOLAR_1, ToothCondition.SISA_AKAR, "https://firebasestorage.googleapis.com/v0/b/smart-odontogram.appspot.com/o/medical_records%2F8NW3AJSaD5dzAmKqTM6O%2F1712213261646?alt=media&token=07fabec6-920c-463a-b03e-fa9d7aab6368"),
+        Tooth("5", ToothType.PREMOLAR_2, ToothCondition.NORMAL, "https://firebasestorage.googleapis.com/v0/b/smart-odontogram.appspot.com/o/medical_records%2F8NW3AJSaD5dzAmKqTM6O%2F1712213261646?alt=media&token=07fabec6-920c-463a-b03e-fa9d7aab6368"),
+        Tooth("6", ToothType.MOLAR_1, ToothCondition.KARIES, "https://firebasestorage.googleapis.com/v0/b/smart-odontogram.appspot.com/o/medical_records%2F8NW3AJSaD5dzAmKqTM6O%2F1712213261646?alt=media&token=07fabec6-920c-463a-b03e-fa9d7aab6368"),
+        Tooth("7", ToothType.MOLAR_2, ToothCondition.TUMPATAN, "https://firebasestorage.googleapis.com/v0/b/smart-odontogram.appspot.com/o/medical_records%2F8NW3AJSaD5dzAmKqTM6O%2F1712213261646?alt=media&token=07fabec6-920c-463a-b03e-fa9d7aab6368"),
+        Tooth("8", ToothType.MOLAR_3, ToothCondition.SISA_AKAR, "https://firebasestorage.googleapis.com/v0/b/smart-odontogram.appspot.com/o/medical_records%2F8NW3AJSaD5dzAmKqTM6O%2F1712213261646?alt=media&token=07fabec6-920c-463a-b03e-fa9d7aab6368")
+    )
 }

@@ -113,12 +113,13 @@ import com.example.odontogram.domain.entity.isReverse
 import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnError
 import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnNotFound
 import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnResult
-import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnSuccess
 import com.example.odontogram.ui.theme.AndroidTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.FileNotFoundException
 import java.io.InputStream
 import kotlin.math.max
@@ -134,7 +135,7 @@ class ClassificationActivity : ComponentActivity() {
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 val replyIntent = Intent()
-                replyIntent.putExtra(ARG_RESULT, "FAILED")
+                replyIntent.putExtra(ARG_RESULT, Json.encodeToString(emptyList<String>()))
                 setResult(RESULT_OK, replyIntent)
                 finish()
             }
@@ -160,7 +161,7 @@ class ClassificationActivity : ComponentActivity() {
                             onShowToast = ::showToast,
                             onSaved = {
                                 val replyIntent = Intent()
-                                replyIntent.putExtra(ARG_RESULT, "SUCCESS")
+                                replyIntent.putExtra(ARG_RESULT, Json.encodeToString(it))
                                 setResult(RESULT_OK, replyIntent)
                                 finish()
                             },
@@ -195,7 +196,7 @@ fun CameraScreen(
     patientId: String,
     quadrantId: Int,
     onShowToast: (String) -> Unit,
-    onSaved: () -> Unit,
+    onSaved: (List<Tooth>) -> Unit,
     onBackPressed: () -> Unit
 ) = with(viewModel) {
     val context = LocalContext.current
@@ -231,21 +232,11 @@ fun CameraScreen(
 
     EventListener(flow = eventChannelFlow) {
         when (it) {
-            is OnResult -> {
-                showSaveModal = true
-            }
+            is OnResult -> { showSaveModal = true }
 
-            is OnNotFound -> {
-                onShowToast("Tidak terdeteksi!")
-            }
+            is OnNotFound -> { onShowToast("Tidak terdeteksi!") }
 
-            is OnError -> {
-                onShowToast(it.message)
-            }
-
-            is OnSuccess -> {
-                onSaved()
-            }
+            is OnError -> { onShowToast(it.message) }
         }
     }
 
@@ -276,7 +267,9 @@ fun CameraScreen(
                     }
                 },
                 actions = {
-                    Button(onClick = ::saveQuadrant) {
+                    Button(onClick = {
+                        onSaved(toothData.toMap().mapNotNull { it.value })
+                    }) {
                         Text(text = "Simpan")
                     }
                 },

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:get/get.dart';
 
@@ -56,7 +58,7 @@ class Tooth extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, type, condition];
+  List<Object?> get props => [id, type, condition, imagePath];
 }
 
 enum ToothType {
@@ -104,4 +106,35 @@ extension ToothQuadranExt on ToothQuadrant {
 
 extension ToothTypeIdExt on int {
   ToothType get toothType => ToothType.values[this % 10 - 1];
+}
+
+extension StringExt on String {
+  List<Tooth> parseToToothList() {
+    final List<dynamic> jsonList = jsonDecode(this);
+    
+    final List<Tooth> toothList = jsonList.map((jsonObject) {
+      return Tooth(
+        id: jsonObject['id'],
+        type: _parseToothType(jsonObject['type']),
+        condition: _parseToothCondition(jsonObject['condition']),
+        imagePath: jsonObject['imagePath'],
+      );
+    }).toList();
+
+    return toothList;
+  }
+
+  ToothType _parseToothType(String typeString) {
+    return ToothType.values.firstWhere(
+      (type) => type.toString().split('.').last == typeString,
+      orElse: () => ToothType.SERI_1,
+    );
+  }
+
+  ToothCondition _parseToothCondition(String conditionString) {
+    return ToothCondition.values.firstWhere(
+      (condition) => condition.toString().split('.').last == conditionString,
+      orElse: () => ToothCondition.NORMAL,
+    );
+  }
 }

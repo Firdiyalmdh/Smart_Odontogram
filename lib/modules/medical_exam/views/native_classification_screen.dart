@@ -16,7 +16,6 @@ class NativeClassificationScreen extends GetView<NativeClassificationController>
         ]
       );
     } else {
-      Get.back(result: value);
       return Text(value);
     }
   }

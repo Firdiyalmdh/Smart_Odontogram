@@ -10,14 +10,15 @@ class MedicalExamController extends GetxController {
   final PatientService patientService;
   RxBool isLoading = false.obs;
   RxString patientId = "".obs;
-  RxMap<ToothQuadrant, bool> resultMap = {
+  RxMap<ToothQuadrant, bool> quadrantMap = {
     ToothQuadrant.QUADRANT_I: false,
     ToothQuadrant.QUADRANT_II: false,
     ToothQuadrant.QUADRANT_III: false,
     ToothQuadrant.QUADRANT_IV: false
   }.obs;
+  RxMap<String, Tooth> resultMap = RxMap();
 
-  final medExamDateController = TextEditingController();
+  final medExamDateController = TextEditingController(text: DateTime.now().toString().split(" ")[0]);
 
   MedicalExamController({
     required this.toothService,
@@ -43,14 +44,56 @@ class MedicalExamController extends GetxController {
     }
   }
 
+  Future<void> saveMedicalRecord() async {
+    isLoading.value = true;
+    final result = await toothService.saveMedicalRecord(
+      resultMap.values.toList(), 
+      medExamDateController.text, 
+      patientId.value
+    );
+    if (result.error != null) {
+      Get.snackbar(
+        "Error!",
+        result.error.toString(),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(20),
+        icon: const Icon(
+          Icons.close,
+          color: Colors.white,
+        ),
+      );
+    } else {
+      Get.back();
+      Get.snackbar(
+        "Berhasil!",
+        "Hasil pemeriksaan berhasil disimpan",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(20),
+        icon: const Icon(
+          Icons.check,
+          color: Colors.white,
+        ),
+      );
+    }
+    isLoading.value = false;
+  }
+
   Future<void> navigateToClassification(ToothQuadrant quadrant) async {
-    final result = await Get.toNamed(
+    String rawResult = await Get.toNamed(
       AppRoutes.NATIVE_CLASSIFICATION,
       arguments: Map.of(<String, dynamic>{
         "quadrant": quadrant,
         "patientId": patientId.value
       })
     );
-    resultMap[quadrant] = result.toString() == "SUCCESS";
+    List<Tooth> result = rawResult.parseToToothList();
+    quadrantMap[quadrant] = result.isNotEmpty;
+    result.forEach((tooth) => resultMap[tooth.id] = tooth);
   }
+
+  bool isButtonDisabled() => quadrantMap.values.every((el) => el) && !isLoading.value;
 }

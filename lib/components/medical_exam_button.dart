@@ -67,6 +67,7 @@ class MedicalExamButton extends StatelessWidget {
               child: const Icon(
                 Icons.check_circle_rounded,
                 color: Colors.green,
+                size: 36,
               ),
             ) : const SizedBox()
           ],

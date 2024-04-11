@@ -46,6 +46,7 @@ extension PatientExt on Patient {
 extension ToothExt on Tooth {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      IMAGE_PATH: imagePath,
       TOOTH_TYPE_PROP: type.name,
       TOOTH_CONDITION_PROP: condition.name
     };

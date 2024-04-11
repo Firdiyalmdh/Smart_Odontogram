@@ -6,6 +6,7 @@ import 'package:odontogram/components/odontogram.dart';
 import 'package:odontogram/models/patient.dart';
 import 'package:odontogram/modules/patient/controllers/detail_patient_controller.dart';
 import 'package:odontogram/routes/app_routes.dart';
+import 'package:odontogram/utils/utils.dart';
 
 class DetailPatientScreen extends GetView<DetailPatientController> {
   const DetailPatientScreen({Key? key}) : super(key: key);
@@ -48,6 +49,8 @@ class DetailPatientScreen extends GetView<DetailPatientController> {
                     margin: const EdgeInsets.all(15),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[900],
+                        foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
@@ -98,9 +101,9 @@ class CardDetailPasien extends StatelessWidget {
                   Text("Jenis kelamin: ${patient!.gender}"),
                   Text("NIK: ${patient!.nik}"),
                   Text(
-                      "TTL: ${patient!.birthPlace}, ${patient!.birthDate}"),
+                      "TTL: ${patient!.birthPlace}, ${formatDate(inputStringDate: patient!.birthDate)}"),
                   Text(
-                      "Pemeriksaan terakhir: ${patient!.lastCheckupDate ?? 'Belum ada pemeriksaan'}"),
+                      "Pemeriksaan terakhir: ${patient!.lastCheckupDate != null ? formatDate(inputStringDate: patient!.lastCheckupDate!) : 'Belum ada pemeriksaan'}"),
                 ],
               ),
             )

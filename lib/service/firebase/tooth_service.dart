@@ -22,6 +22,22 @@ class ToothService {
     }
   }
 
+  Future<Result<void>> saveMedicalRecord(List<Tooth> data, String lastMedRecordDate, String patientId) async {
+    try {
+      final patientRef = _db
+            .collection(PATIENT_COLLECTION)
+            .doc(patientId);
+      final medRecordRef = patientRef.collection(MEDICAL_RECORD_COLLECTION);
+      await _db.runTransaction((trx) async {
+        data.forEach((tooth) => trx.set(medRecordRef.doc(tooth.id), tooth.toMap()));
+        trx.update(patientRef, { "last_checkup_date": lastMedRecordDate });
+      });
+      return Result("", null);
+    } on Exception catch (err) {
+      return Result(null, err);
+    }
+  }
+
   Future<Result<void>> editMedicalRecord(Tooth data, String patientId) async {
     try {
       await _db

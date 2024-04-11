@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:odontogram/components/appbar.dart';
+import 'package:odontogram/components/home_app_bar.dart';
 import 'package:odontogram/components/card_data_pasien.dart';
 import 'package:odontogram/components/search_form.dart';
 import 'package:odontogram/modules/home/index.dart';
@@ -11,7 +11,8 @@ class HomeScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(
+      appBar: HomeAppBar(
+        name: controller.user.value.name,
         onLogoutClick: () {
           controller.logout();
         },
@@ -22,15 +23,6 @@ class HomeScreen extends GetView<HomeController> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Obx(
-              () => Text(
-                controller.user.value.name,
-                style: TextStyle(
-                    fontSize: 21,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[600]),
-              ),
-            ),
             Obx(() {
               print(controller.user.value);
               return SizedBox();

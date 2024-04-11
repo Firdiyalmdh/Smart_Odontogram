@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
-class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
+class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String name;
   final void Function() onLogoutClick;
 
-  const MyAppBar({super.key, required this.onLogoutClick});
+  const HomeAppBar({
+    super.key,
+    required this.name,
+    required this.onLogoutClick
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(50.0);
@@ -15,7 +20,8 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0.0,
       automaticallyImplyLeading: false,
       title: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
             'assets/logoblue.png',
@@ -23,14 +29,21 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
             height: 40.0,
           ),
           const SizedBox(width: 8.0),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              SizedBox(height: 8.0),
-              Text(
+              const SizedBox(height: 12),
+              const Text(
                 'Selamat datang,',
                 style: TextStyle(fontSize: 16.0, color: Colors.grey),
+              ),
+              Text(
+                name,
+                style: TextStyle(
+                    fontSize: 21,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[600],
+                  ),
               ),
             ],
           ),

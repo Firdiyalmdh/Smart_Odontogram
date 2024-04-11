@@ -9,7 +9,9 @@ import com.example.odontogram.domain.entity.ToothCondition.TUMPATAN
 import com.example.odontogram.domain.entity.ToothType.SERI_1
 import com.example.odontogram.domain.entity.ToothType.SERI_2
 import com.example.odontogram.domain.entity.ToothType.TARING
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Tooth(
     val id: String,
     val type: ToothType,
@@ -40,6 +42,7 @@ data class Tooth(
     }
 }
 
+@Serializable
 enum class ToothType(
     val q1: Int,
     val q2: Int,
@@ -63,6 +66,7 @@ fun ToothType.getId(quadrant: ToothQuadrant) = when (quadrant) {
     ToothQuadrant.QUADRANT_IV -> q4
 }
 
+@Serializable
 enum class ToothCondition {
     NORMAL,
     KARIES,
@@ -86,8 +90,6 @@ fun ToothQuadrant.getIdList() = when (this) {
 }
 
 fun ToothQuadrant.isReverse() = this == ToothQuadrant.QUADRANT_I || this == ToothQuadrant.QUADRANT_III
-
-fun ToothQuadrant.title() = this.name.lowercase().split("_").joinToString(" ") { it.capitalize() }
 
 fun Int.toToothQuadrant(): ToothQuadrant = when (this) {
     1 -> ToothQuadrant.QUADRANT_I

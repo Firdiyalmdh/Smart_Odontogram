@@ -59,7 +59,7 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   iconPosition: const Rect.fromLTRB(0, 0, 6, 6),
                   iconAsset: ToothQuadrant.QUADRANT_I.icon,
                   checkPosition: const Rect.fromLTRB(16, 0, 0, 16),
-                  isFilled: controller.resultMap[ToothQuadrant.QUADRANT_I] ?? false,
+                  isFilled: controller.quadrantMap[ToothQuadrant.QUADRANT_I] ?? false,
                   onTap: () {
                     controller.navigateToClassification(ToothQuadrant.QUADRANT_I);
                   },
@@ -71,7 +71,7 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   iconPosition: const Rect.fromLTRB(6, 0, 0, 6),
                   iconAsset: ToothQuadrant.QUADRANT_II.icon,
                   checkPosition: const Rect.fromLTRB(0, 0, 16, 16),
-                  isFilled: controller.resultMap[ToothQuadrant.QUADRANT_II] ?? false,
+                  isFilled: controller.quadrantMap[ToothQuadrant.QUADRANT_II] ?? false,
                   onTap: () {
                     controller.navigateToClassification(ToothQuadrant.QUADRANT_II);
                   },
@@ -83,7 +83,7 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   iconPosition: const Rect.fromLTRB(0, 6, 6, 0),
                   iconAsset: ToothQuadrant.QUADRANT_III.icon,
                   checkPosition: const Rect.fromLTRB(16, 16, 0, 0),
-                  isFilled: controller.resultMap[ToothQuadrant.QUADRANT_III] ?? false,
+                  isFilled: controller.quadrantMap[ToothQuadrant.QUADRANT_III] ?? false,
                   onTap: () {
                     controller.navigateToClassification(ToothQuadrant.QUADRANT_III);
                   },
@@ -95,7 +95,7 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                   iconPosition: const Rect.fromLTRB(6, 6, 0, 0),
                   iconAsset: ToothQuadrant.QUADRANT_IV.icon,
                   checkPosition: const Rect.fromLTRB(0, 16, 16, 0),
-                  isFilled: controller.resultMap[ToothQuadrant.QUADRANT_IV] ?? false,
+                  isFilled: controller.quadrantMap[ToothQuadrant.QUADRANT_IV] ?? false,
                   onTap: () {
                     controller.navigateToClassification(ToothQuadrant.QUADRANT_IV);
                   },
@@ -114,7 +114,7 @@ class MedicalExamScreen extends GetView<MedicalExamController> {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: controller.isButtonDisabled() ? null : () => controller.saveMedicalRecord(),
                 child: (controller.isLoading.value)
                     ? Transform.scale(
                         scale: .75,

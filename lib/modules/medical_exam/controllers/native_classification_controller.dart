@@ -17,6 +17,6 @@ class NativeClassificationController extends GetxController {
       args['patientId'] ?? "",
       args['quadrant']
     );
-    result; // TODO show toast and back to new medical exam screen
+    Get.back(result: result.value);
   }
 }

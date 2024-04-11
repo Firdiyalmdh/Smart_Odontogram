@@ -2,10 +2,8 @@ package com.example.odontogram.data
 
 import android.graphics.Bitmap
 import com.example.odontogram.domain.entity.Resource
-import com.example.odontogram.domain.entity.Tooth
 import com.example.odontogram.domain.repository.FirebaseRepository
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -28,24 +26,6 @@ class FirebaseRepositoryImpl : FirebaseRepository {
                 .child(System.currentTimeMillis().toString())
             val downloadUrl = ref.putBytes(data).await().storage.downloadUrl.await().toString()
             emit(Resource.Success(downloadUrl))
-        } catch (e: Exception) {
-            emit(Resource.Error(e.localizedMessage ?: "Unknown Error"))
-        }
-    }
-
-    override suspend fun saveMedicalExamResult(patientId: String, data: List<Tooth>) = flow {
-        emit(Resource.Loading())
-        try {
-            val medRecordRef = db.collection(PATIENT_COLLECTION)
-                .document(patientId)
-                .collection(MEDICAL_RECORD_COLLECTION)
-
-            db.runTransaction { trx ->
-                data.forEach {
-                    trx.set(medRecordRef.document(it.id), it, SetOptions.merge())
-                }
-            }.await()
-            emit(Resource.Success(true))
         } catch (e: Exception) {
             emit(Resource.Error(e.localizedMessage ?: "Unknown Error"))
         }
