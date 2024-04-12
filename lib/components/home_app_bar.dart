@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:odontogram/models/user.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String name;
+  final Rx<User> user;
   final void Function() onLogoutClick;
 
   const HomeAppBar({
     super.key,
-    required this.name,
+    required this.user,
     required this.onLogoutClick
   });
 
@@ -37,13 +39,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 'Selamat datang,',
                 style: TextStyle(fontSize: 16.0, color: Colors.grey),
               ),
-              Text(
-                name,
-                style: TextStyle(
-                    fontSize: 21,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[600],
-                  ),
+              Obx(() => Text(
+                  user.value.name,
+                  style: TextStyle(
+                      fontSize: 21,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[600],
+                    ),
+                ),
               ),
             ],
           ),

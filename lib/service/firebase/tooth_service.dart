@@ -38,14 +38,14 @@ class ToothService {
     }
   }
 
-  Future<Result<void>> editMedicalRecord(Tooth data, String patientId) async {
+  Future<Result<void>> editMedicalRecord(String condition, String toothId, String patientId) async {
     try {
       await _db
           .collection(PATIENT_COLLECTION)
           .doc(patientId)
           .collection(MEDICAL_RECORD_COLLECTION)
-          .doc(data.id)
-          .set(data.toMap(), SetOptions(merge: true));
+          .doc(toothId)
+          .update({ TOOTH_CONDITION_PROP: condition });
       return Result("", null);
     } on Exception catch (err) {
       return Result(null, err);

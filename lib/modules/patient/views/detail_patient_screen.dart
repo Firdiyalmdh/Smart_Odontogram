@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:odontogram/components/edit_tooth_dialog.dart';
 import 'package:odontogram/components/odontogram.dart';
 import 'package:odontogram/models/patient.dart';
 import 'package:odontogram/modules/patient/controllers/detail_patient_controller.dart';
@@ -38,7 +39,22 @@ class DetailPatientScreen extends GetView<DetailPatientController> {
                 alignment: Alignment.center,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  child: Odontogram(toothList: controller.toothList.value),
+                  child: Odontogram(
+                    toothList: controller.toothList.value,
+                    onTap: (tooth) {
+                      controller.toothCondition.value = tooth.condition.name;
+                      Get.dialog(
+                        Obx(() => EditToothDialog(
+                            tooth: tooth, 
+                            selectedCondition: controller.toothCondition.value, 
+                            isLoading: controller.isLoading.value, 
+                            onSelectCondition: (condition) { controller.toothCondition.value = condition; }, 
+                            onSave: () { controller.editToothCondition(tooth.id); }
+                          ),
+                        ),
+                      );
+                    }
+                  ),
                 ),
               ),
             ),

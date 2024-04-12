@@ -57,6 +57,8 @@ class Tooth extends Equatable {
     }
   }
 
+  String getTitle() => "$id - ${type.name.replaceFirst("_", " ").toLowerCase().capitalizeFirst}";
+
   @override
   List<Object?> get props => [id, type, condition, imagePath];
 }

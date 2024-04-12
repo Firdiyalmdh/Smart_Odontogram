@@ -4,7 +4,12 @@ import 'package:odontogram/models/tooth.dart';
 
 class Odontogram extends StatelessWidget {
   final List<Tooth> toothList;
-  const Odontogram({super.key, required this.toothList});
+  final void Function(Tooth) onTap;
+  const Odontogram({
+    super.key, 
+    required this.toothList,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,22 +19,22 @@ class Odontogram extends StatelessWidget {
 
     List<Widget> firstRow = ToothQuadrant.QUADRANT_I.idList.map((id) {
       final index = toothList.indexWhere((e) => int.parse(e.id) == id);
-      return ToothItem(id: id, data: toothList[index], onTap: () {});
+      return ToothItem(id: id, data: toothList[index], onTap: () { onTap(toothList[index]); });
     }).toList();
 
     firstRow.addAll(ToothQuadrant.QUADRANT_II.idList.map((id) {
       final index = toothList.indexWhere((e) => int.parse(e.id) == id);
-      return ToothItem(id: id, data: toothList[index], onTap: () {});
+      return ToothItem(id: id, data: toothList[index], onTap: () { onTap(toothList[index]); });
     }).toList());
 
     List<Widget> secondRow = ToothQuadrant.QUADRANT_III.idList.map((id) {
       final index = toothList.indexWhere((e) => int.parse(e.id) == id);
-      return ToothItem(id: id, data: toothList[index], onTap: () {});
+      return ToothItem(id: id, data: toothList[index], onTap: () { onTap(toothList[index]); });
     }).toList();
 
     secondRow.addAll(ToothQuadrant.QUADRANT_IV.idList.map((id) {
       final index = toothList.indexWhere((e) => int.parse(e.id) == id);
-      return ToothItem(id: id, data: toothList[index], onTap: () {});
+      return ToothItem(id: id, data: toothList[index], onTap: () { onTap(toothList[index]); });
     }).toList());
 
     return Column(

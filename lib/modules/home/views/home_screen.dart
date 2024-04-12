@@ -10,9 +10,12 @@ class HomeScreen extends GetView<HomeController> {
   const HomeScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    ever(controller.patients, (patients) => controller.updateFilteredPatient());
+    controller.searchController.addListener(() => controller.updateFilteredPatient());
+
     return Scaffold(
       appBar: HomeAppBar(
-        name: controller.user.value.name,
+        user: controller.user,
         onLogoutClick: () {
           controller.logout();
         },
@@ -23,10 +26,6 @@ class HomeScreen extends GetView<HomeController> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Obx(() {
-              print(controller.user.value);
-              return SizedBox();
-            }),
             const SizedBox(height: 20),
             Container(
               width: 390,

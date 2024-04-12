@@ -11,6 +11,8 @@ class DetailPatientController extends GetxController {
 
   Rx<Patient?> patient = Rx(null);
   RxList<Tooth> toothList = RxList([]);
+  Rx<String> toothCondition = "".obs;
+  RxBool isLoading = false.obs;
 
   DetailPatientController({
     required this.patientService,
@@ -44,5 +46,39 @@ class DetailPatientController extends GetxController {
     } else {
       return result.data!;
     }
+  }
+
+  Future<void> editToothCondition(String toothId) async {
+    isLoading.value = true;
+    final result = await toothService.editMedicalRecord(toothCondition.value, toothId, patient.value?.id ?? "");
+    if (result.error != null) {
+      Get.snackbar(
+        "Error!",
+        result.error.toString(),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(20),
+        icon: const Icon(
+          Icons.close,
+          color: Colors.white,
+        ),
+      );
+    } else {
+      Get.back();
+      Get.snackbar(
+        "Berhasil!",
+        "Data gigi $toothId berhasil diedit",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(20),
+        icon: const Icon(
+          Icons.check,
+          color: Colors.white,
+        ),
+      );
+    }
+    isLoading.value = false;
   }
 }

@@ -18,7 +18,7 @@ class SearchForm extends StatelessWidget {
         controller: _searchController,
         decoration: InputDecoration(
           prefixIcon: const Icon(Icons.search),
-          hintText: "Search",
+          hintText: "Cari Nama Pasien",
           filled: true,
           fillColor: Colors.grey[200],
           enabledBorder: const OutlineInputBorder(

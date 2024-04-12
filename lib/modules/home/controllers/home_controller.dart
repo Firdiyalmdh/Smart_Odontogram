@@ -15,6 +15,7 @@ class HomeController extends GetxController {
   final searchController = TextEditingController();
   var user = const User(email: "", institute: "", name: "").obs;
   RxList<Patient> patients = RxList([]);
+  RxList<Patient> filteredPatients = RxList([]);
   RxBool isLoading = RxBool(false);
 
   HomeController({
@@ -49,9 +50,14 @@ class HomeController extends GetxController {
     }
   }
 
-  List<Patient> get filteredPatients => patients
+  List<Patient> filterPatient() => patients
       .where((item) => item.name.toLowerCase().contains(searchController.text))
       .toList();
+
+  void updateFilteredPatient() {
+    filteredPatients.clear();
+    filteredPatients.addAll(filterPatient());
+  }
 
   Stream<List<Patient>> getAllPatients() {
     isLoading.value = true;
