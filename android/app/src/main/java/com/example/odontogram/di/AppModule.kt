@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.odontogram.data.FirebaseRepositoryImpl
 import com.example.odontogram.data.TfLiteToothConditionClassifier
 import com.example.odontogram.data.TfLiteToothTypeDetector
+import com.example.odontogram.data.intraoral.IntraOralCameraService
 import com.example.odontogram.domain.repository.FirebaseRepository
 import com.example.odontogram.domain.service.ToothConditionClassifier
 import com.example.odontogram.domain.service.ToothTypeDetector
@@ -40,6 +41,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideToothTypeAnalyzer(detector: ToothTypeDetector): ToothTypeAnalyzer = ToothTypeAnalyzer(detector)
+
+    @Provides
+    @Singleton
+    fun provideIntraOralCameraService(): IntraOralCameraService = IntraOralCameraService()
 
     @Provides
     @Singleton

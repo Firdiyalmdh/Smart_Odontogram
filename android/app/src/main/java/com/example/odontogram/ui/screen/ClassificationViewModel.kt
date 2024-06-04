@@ -3,6 +3,7 @@ package com.example.odontogram.ui.screen
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -10,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.odontogram.data.intraoral.IntraOralCameraService
 import com.example.odontogram.domain.entity.Detection
 import com.example.odontogram.domain.entity.Resource
 import com.example.odontogram.domain.entity.Tooth
@@ -25,12 +27,14 @@ import com.example.odontogram.domain.service.ToothTypeDetector
 import com.example.odontogram.ui.util.ToothTypeAnalyzer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ClassificationViewModel @Inject constructor(
+    private val intraOralCameraService: IntraOralCameraService,
     private val toothTypeAnalyzer: ToothTypeAnalyzer,
     private val toothConditionClassifier: ToothConditionClassifier,
     private val toothTypeDetector: ToothTypeDetector,
@@ -54,10 +58,23 @@ class ClassificationViewModel @Inject constructor(
     val eventChannelFlow = _eventChannel.receiveAsFlow()
 
     init {
-        toothTypeAnalyzer.setOnResult {
-            detections.clear()
-            detections.addAll(it)
+        viewModelScope.launch {
+            toothTypeAnalyzer.setOnResult {
+                detections.clear()
+                detections.addAll(it)
+            }
+            intraOralCameraService.startStream().collect {
+
+            }
+            intraOralCameraService.listenKeyAction {
+                _eventChannel.send(Event.OnCaptureImage)
+            }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        intraOralCameraService.destroy()
     }
 
     fun setPatientIdValue(id: String) {
@@ -145,6 +162,7 @@ class ClassificationViewModel @Inject constructor(
 
     sealed interface Event {
         data object OnResult : Event
+        data object OnCaptureImage : Event
         data object OnNotFound : Event
         data class OnError(val message: String) : Event
     }

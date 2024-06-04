@@ -110,6 +110,7 @@ import com.example.odontogram.domain.entity.ToothCondition
 import com.example.odontogram.domain.entity.ToothQuadrant
 import com.example.odontogram.domain.entity.ToothType
 import com.example.odontogram.domain.entity.isReverse
+import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnCaptureImage
 import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnError
 import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnNotFound
 import com.example.odontogram.ui.screen.ClassificationViewModel.Event.OnResult
@@ -233,6 +234,15 @@ fun CameraScreen(
     EventListener(flow = eventChannelFlow) {
         when (it) {
             is OnResult -> { showSaveModal = true }
+
+            is OnCaptureImage -> {
+                takePhoto(
+                    context = context,
+                    controller = controller,
+                    onPhotoTaken = ::classify,
+                    onError = onShowToast
+                )
+            }
 
             is OnNotFound -> { onShowToast("Tidak terdeteksi!") }
 
