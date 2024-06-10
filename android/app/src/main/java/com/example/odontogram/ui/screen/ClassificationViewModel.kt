@@ -84,15 +84,20 @@ class ClassificationViewModel @Inject constructor(
 
     fun classify(bitmap: Bitmap, rotationDegrees: Int) = viewModelScope.launch {
         try {
-            if (detections.isEmpty()) throw Exception()
+            val croppedBitmap =
+                if (detections.isNotEmpty()) bitmap.crop(detections.first().boundingBox)
+                else bitmap
             val results = toothConditionClassifier.classify(
-                bitmap.crop(detections.first().boundingBox),
+                croppedBitmap,
                 rotationDegrees
             )
 
-            if (results.isEmpty()) throw Exception()
-            condition = ToothCondition.valueOf(results.first().name.uppercase())
-            type = ToothType.valueOf(detections.first().label.uppercase())
+            condition =
+                if (results.isNotEmpty()) ToothCondition.valueOf(results.first().name.uppercase())
+                else ToothCondition.NORMAL
+            type =
+                if (detections.isNotEmpty()) ToothType.valueOf(detections.first().label.uppercase())
+                else ToothType.SERI_1
             toothImage = bitmap
             _eventChannel.send(Event.OnResult)
         } catch (e: Exception) {
@@ -103,8 +108,7 @@ class ClassificationViewModel @Inject constructor(
     fun detect(bitmap: Bitmap) = viewModelScope.launch {
         try {
             val results = toothTypeDetector.detect(bitmap, 0)
-            if (results.isEmpty()) throw Exception()
-            detections.addAll(results)
+            if (results.isNotEmpty()) detections.addAll(results)
             classify(bitmap, 0)
         } catch (e: Exception) {
             _eventChannel.send(Event.OnNotFound)
